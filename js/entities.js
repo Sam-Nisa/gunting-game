@@ -15,7 +15,7 @@ let boss = null;
 // ═══════════════════════════════════════════════════
 function announceWave(w) {
   const el = document.getElementById("waveAnnounce");
-  el.textContent = w % 5 === 0 ? `⚠️ BOSS WAVE ${w}!` : `⚡ WAVE ${w}`;
+  el.textContent = w % 5 === 0 ? `⚠️ BOSS LEVEL ${w}!` : `⚡ LEVEL ${w}`;
   el.style.opacity = "1";
   setTimeout(() => (el.style.opacity = "0"), 2000);
 }
@@ -28,9 +28,10 @@ function spawnWave(w) {
     spawnBoss(w);
     return;
   }
-  // MODIFIED: Enemy count adjusted by difficulty
+  // MODIFIED: Enemy count grows slower after level 6
+  const baseCount = 4 + Math.min(w, 6) * 2 + Math.max(0, w - 6) * 1;
   const count = Math.floor(
-    (4 + w * 2) * DIFFICULTY_SETTINGS[difficulty].countMult,
+    baseCount * DIFFICULTY_SETTINGS[difficulty].countMult,
   );
   for (let i = 0; i < count; i++) {
     const side = Math.random() > 0.5 ? 1 : -1;

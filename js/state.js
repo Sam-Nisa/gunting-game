@@ -13,7 +13,6 @@ let score = 0,
   gameRunning = false;
 let screenShake = 0;
 let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
-let coins = parseInt(localStorage.getItem("mf_coins") || "0");
 
 // NEW: Global speed modifier. 1.0 is normal speed. 0.5 is slower than current.
 const gameSpeed = 0.4;
@@ -27,7 +26,7 @@ bgImage.onerror = () => (bgImageLoaded = false);
 
 function getBackgroundForWave(w) {
   const index = ((w - 1) % BG_IMAGE_COUNT) + 1;
-  return `image${index}.png`;
+  return `../img/image${index}.png`;
 }
 
 function setBackgroundForWave(w) {
@@ -69,12 +68,12 @@ const DIFFICULTY_SETTINGS = {
 
 function setDifficulty(level) {
   difficulty = level;
-  document
-    .querySelectorAll(".diffBtn")
-    .forEach((btn) => btn.classList.remove("active"));
-  document
-    .getElementById(`diff${level.charAt(0).toUpperCase() + level.slice(1)}`)
-    .classList.add("active");
+  const buttons = document.querySelectorAll(".diffBtn");
+  buttons.forEach((btn) => btn.classList.remove("active"));
+  const activeBtn = document.getElementById(
+    `diff${level.charAt(0).toUpperCase() + level.slice(1)}`,
+  );
+  if (activeBtn) activeBtn.classList.add("active");
 }
 
 // ═══════════════════════════════════════════════════
@@ -184,7 +183,6 @@ function resetPlayer() {
     frameTimer: 0,
     shootAnim: 0,
     weapon: "rifle",
-    skin: localStorage.getItem("mf_skin") || "default",
     grenades: 3,
     jumpPressed: false,
     grenadeCD: 0,

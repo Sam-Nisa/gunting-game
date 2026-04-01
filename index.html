@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Metal Fury v2 - Ultimate Edition</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
@@ -20,10 +20,9 @@
             <div>💀 <span id="killsDisplay">0</span></div>
             <div>🧡 <span id="livesDisplay">3</span></div>
             <div>⭐ <span id="scoreDisplay">0</span></div>
-            <div style="color: gold">🪙 <span id="coinDisplay">0</span></div>
             <!-- MODIFIED: Wrapped right side controls for better layout -->
             <div class="rightControls">
-                <div>🌊 WAVE <span id="waveDisplay">1</span></div>
+                <div>🌊 LEVEL <span id="waveDisplay">1</span></div>
                 <div id="inGameSoundToggle" class="soundToggle" onclick="toggleSound()">🔊</div>
             </div>
         </div>
@@ -36,7 +35,6 @@
             <span class="controlChip"><strong>G</strong> Grenade</span>
             <span class="controlChip"><strong>Q</strong> Weapon</span>
             <span class="controlChip"><strong>M</strong> Sound</span>
-            <span class="controlChip"><strong>B</strong> Shop</span>
         </div>
         <div id="overlay">
             <h1>⚡ METAL FURY</h1>
@@ -47,29 +45,19 @@
                     <li>— No scores yet —</li>
                 </ul>
             </div>
-            <!-- NEW: Settings Controls -->
             <div class="settingsWrap">
-                <div class="difficultySelect">
-                    <span>DIFFICULTY:</span>
-                    <button id="diffEasy" class="diffBtn" onclick="setDifficulty('easy')">EASY</button>
-                    <button id="diffNormal" class="diffBtn active" onclick="setDifficulty('normal')">NORMAL</button>
-                    <button id="diffHard" class="diffBtn" onclick="setDifficulty('hard')">HARD</button>
-                </div>
-                <div class="actionRow">
-                    <button id="soundToggleBtn" class="actionBtn" onclick="toggleSound()">🔊 SOUND</button>
-                    <button class="actionBtn" onclick="toggleShop()">🛒 SHOP</button>
-                </div>
+                <div><span id="soundToggleBtn" class="soundToggle" onclick="toggleSound()">🔊</span></div>
             </div>
             <button class="btn" onclick="startGame()">▶ START GAME</button>
         </div>
         <div id="waveAnnounce"></div>
     </div>
 
-    <script src="audio.js"></script>
-    <script src="state.js"></script>
-    <script src="entities.js"></script>
-    <script src="render.js"></script>
-    <script src="game.js"></script>
+    <script src="./js/audio.js"></script>
+    <script src="./js/state.js"></script>
+    <script src="./js/entities.js"></script>
+    <script src="./js/render.js"></script>
+    <script src="./js/game.js"></script>
 </body>
 
 </html>
