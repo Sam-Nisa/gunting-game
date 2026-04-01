@@ -713,14 +713,9 @@ function update() {
       dy = player.y - boss.y;
     boss.facing = dx > 0 ? 1 : -1;
     boss.rage = boss.hp < boss.maxHp * 0.4;
-    const speed = boss.rage ? 2.2 : 1.4;
-    boss.moveCd--;
-    if (boss.moveCd <= 0) {
-      boss.vx = boss.facing * speed;
-      boss.moveCd = 40 + Math.random() * 60;
-    }
-    if (player.y < boss.y - 80 && boss.onGround && Math.random() < 0.015)
-      boss.vy = -13;
+
+    // Boss stands in place and only shoots, instead of chasing the player.
+    boss.vx = 0;
 
     boss.shootCd--;
     const rate = boss.rage ? 25 : 40;
