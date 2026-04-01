@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Metal Fury v2 - Ultimate Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
@@ -14,16 +15,22 @@
                     <div id="healthFill" style="width:100%"></div>
                 </div>
             </div>
-            <div><span id="weaponIcon">🔫</span> <span id="weaponName">RIFLE</span> | AMO:<span
-                    id="ammoDisplay">∞</span></div>
-            <div id="grenadeDisplay">💣 <span id="grenadeDisplay2">3</span></div>
+            <div>
+              <span id="weaponIcon">🔫</span>
+              <span id="weaponName" class="mono">RIFLE</span>
+              | AMO:<span id="ammoDisplay" class="mono">∞</span>
+            </div>
+            <div id="grenadeDisplay">💣 <span id="grenadeDisplay2" class="mono">3</span></div>
             <div>💀 <span id="killsDisplay">0</span></div>
             <div>🧡 <span id="livesDisplay">3</span></div>
             <div>⭐ <span id="scoreDisplay">0</span></div>
+            <div>🪙 <span id="coinDisplay">0</span></div>
+            <div>🎨 <span id="skinDisplay">DEFAULT</span></div>
             <!-- MODIFIED: Wrapped right side controls for better layout -->
             <div class="rightControls">
-                <div>🌊 LEVEL <span id="waveDisplay">1</span></div>
-                <div id="inGameSoundToggle" class="soundToggle" onclick="toggleSound()">🔊</div>
+                <div class="waveBadge">🌊 <span id="waveDisplay" class="mono">1</span></div>
+                <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop">🛒 <span>SHOP</span></div>
+                <div id="inGameSoundToggle" class="topActionBtn soundToggle" onclick="toggleSound()">🔊</div>
             </div>
         </div>
         <canvas id="gameCanvas" width="900" height="480"></canvas>
@@ -37,7 +44,7 @@
             <span class="controlChip"><strong>M</strong> Sound</span>
         </div>
         <div id="overlay">
-            <h1>⚡ METAL FURY</h1>
+            <h1 class="glitch" data-text="⚡ METAL FURY">⚡ METAL FURY</h1>
             <p class="sub">Ultimate Edition — Survive the jungle assault</p>
             <div id="leaderboard">
                 <h3>🏆 HIGH SCORES</h3>
@@ -45,11 +52,15 @@
                     <li>— No scores yet —</li>
                 </ul>
             </div>
-            <div class="settingsWrap">
-                <div><span id="soundToggleBtn" class="soundToggle" onclick="toggleSound()">🔊</span></div>
+            <div class="settingsWrap" style="flex-direction:row;justify-content:center;margin-bottom:20px;">
+                <span id="shopToggleBtnOverlay" class="topActionBtn pulse-anim" style="animation:none;" onclick="toggleShop()" title="Open Shop">🛒 SHOP</span>
+                <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">🔊 SOUND</span>
             </div>
-            <button class="btn" onclick="startGame()">▶ START GAME</button>
+            <button class="btn primary-btn pulse-anim" onclick="startGame()">
+                <span class="btn-content">▶ START GAME</span>
+            </button>
         </div>
+        <div id="shopModal"></div>
         <div id="waveAnnounce"></div>
     </div>
 

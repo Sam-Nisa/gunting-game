@@ -10,7 +10,11 @@ let keys = {},
 let score = 0,
   kills = 0,
   wave = 1,
-  gameRunning = false;
+  gameRunning = false,
+  shopOpen = false,
+  coins = Number(localStorage.getItem("mf_coins") || "0"),
+  selectedSkin = localStorage.getItem("mf_skin") || "default";
+let ownedSkins = JSON.parse(localStorage.getItem("mf_owned_skins") || '["default"]');
 let screenShake = 0;
 let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
 
@@ -184,6 +188,7 @@ function resetPlayer() {
     shootAnim: 0,
     weapon: "rifle",
     grenades: 3,
+    skin: selectedSkin || "default",
     jumpPressed: false,
     grenadeCD: 0,
     crouching: false,
@@ -205,6 +210,7 @@ function respawnPlayer() {
   player.shootAnim = 0;
   player.weapon = "rifle";
   player.grenades = 3;
+  player.skin = selectedSkin || "default";
   player.jumpPressed = false;
   player.grenadeCD = 0;
   player.crouching = false;

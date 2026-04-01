@@ -55,12 +55,17 @@ function drawPlayer(p) {
   ctx.fillRect(-9, 8, 9, pantHeight);
   ctx.fillRect(1, 8, 9, pantHeight);
   // Body
-  const bodyCol =
-    p.weapon === "rocket"
-      ? "#cc4400"
-      : p.weapon === "shotgun"
-        ? "#226633"
-        : "#3a7bd5";
+  let bodyCol = "#3a7bd5"; // default blue
+  if (p.skin && p.skin !== "default") {
+    if (p.skin === "steel") bodyCol = "#888888";
+    else if (p.skin === "neon") bodyCol = "#00ffcc";
+    else if (p.skin === "gold") bodyCol = "#ffaa00";
+    else if (p.skin === "cyborg") bodyCol = "#7722ff";
+  } else if (p.weapon === "rocket") {
+    bodyCol = "#cc4400";
+  } else if (p.weapon === "shotgun") {
+    bodyCol = "#226633";
+  }
   ctx.fillStyle = bodyCol;
   ctx.fillRect(-11, bodyTop, 22, bodyHeight);
   // Belt
@@ -798,6 +803,11 @@ function update() {
             e.dead = true;
             kills++;
             score += e.type === "heavy" ? 300 : 150;
+            const coinReward = Math.round(
+              (e.type === "heavy" ? 18 : 10) * DIFFICULTY_SETTINGS[difficulty].countMult,
+            );
+            coins += coinReward;
+            savePersistentData();
           }
         }
       }
@@ -847,6 +857,11 @@ function update() {
           e.dead = true;
           kills++;
           score += e.type === "heavy" ? 300 : e.type === "drone" ? 200 : 100;
+          const coinReward = Math.round(
+            (e.type === "heavy" ? 18 : e.type === "drone" ? 14 : 10) * DIFFICULTY_SETTINGS[difficulty].countMult,
+          );
+          coins += coinReward;
+          savePersistentData();
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ff2200", 14);
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ffcc44", 6);
           if (Math.random() < 0.4) dropPickup(e.x + e.w / 2, e.y);
@@ -868,6 +883,9 @@ function update() {
           e.dead = true;
           kills++;
           score += 200;
+          const coinReward = Math.round(10 * DIFFICULTY_SETTINGS[difficulty].countMult);
+          coins += coinReward;
+          savePersistentData();
           spawnParticles(ex2, ey, "#ff2200", 10);
         }
       }
@@ -1013,6 +1031,8 @@ function update() {
   document.getElementById("killsDisplay").textContent = kills;
   document.getElementById("livesDisplay").textContent = player.lives;
   document.getElementById("scoreDisplay").textContent = score;
+  const coinLabel = document.getElementById("coinDisplay");
+  if (coinLabel) coinLabel.textContent = coins;
   document.getElementById("waveDisplay").textContent = wave;
   document.getElementById("ammoDisplay").textContent =
     WEAPONS[player.weapon].ammo < 0 ? "∞" : WEAPONS[player.weapon].ammo;
@@ -1022,6 +1042,8 @@ function killBoss() {
   boss.dead = true;
   kills += 10;
   score += 3000 + boss.level * 1000;
+  coins += 75;
+  savePersistentData();
   spawnExplosion(boss.x + boss.w / 2, boss.y + boss.h / 2, 120);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ff4400", 30, 10);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ffcc44", 20, 8);

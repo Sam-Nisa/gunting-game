@@ -65,6 +65,27 @@ function saveScore(s, k, w) {
   localStorage.setItem("mf_scores", JSON.stringify(highScores));
 }
 
+function savePersistentData() {
+  localStorage.setItem("mf_coins", String(coins));
+  localStorage.setItem("mf_skin", selectedSkin);
+  localStorage.setItem("mf_owned_skins", JSON.stringify(ownedSkins));
+}
+
+function setPlayerSkin(key) {
+  selectedSkin = key;
+  player.skin = key;
+  savePersistentData();
+  const skinLabel = document.getElementById("skinDisplay");
+  if (skinLabel) skinLabel.textContent = key.toUpperCase();
+}
+
+function updateHudUI() {
+  const coinLabel = document.getElementById("coinDisplay");
+  if (coinLabel) coinLabel.textContent = coins;
+  const skinLabel = document.getElementById("skinDisplay");
+  if (skinLabel) skinLabel.textContent = selectedSkin.toUpperCase();
+}
+
 function renderLeaderboard() {
   const ul = document.getElementById("lbList");
   if (!ul) return;
@@ -88,7 +109,6 @@ function startGame() {
   if (AC.state === "suspended") AC.resume();
   document.getElementById("overlay").style.display = "none";
   score = 0;
-  coins = 0;
   kills = 0;
   wave = 1;
   bullets = [];
@@ -106,6 +126,7 @@ function startGame() {
   WEAPONS.rocket.ammo = 6;
   resetPlayer();
   updateWeaponUI();
+  updateHudUI();
   document.getElementById("grenadeDisplay2").textContent = "3";
   spawnWave(1);
   gameRunning = true;
@@ -127,8 +148,9 @@ function endGame() {
       <h3 style="color:#ff8800;font-size:13px;letter-spacing:2px;margin-bottom:6px">🏆 HIGH SCORES</h3>
       <ul id="lbList" style="list-style:none;font-size:12px;color:#ccc"></ul>
     </div>
-    <div class="settingsWrap">
-      <div><span id="soundToggleBtn" class="soundToggle" onclick="toggleSound()">🔊</span></div>
+    <div class="settingsWrap" style="flex-direction:row;justify-content:center;margin-bottom:20px;">
+      <span id="shopToggleBtnOverlay" class="topActionBtn pulse-anim" style="animation:none;" onclick="toggleShop()" title="Open Shop">🛒 SHOP</span>
+      <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">🔊 SOUND</span>
     </div>
     <button class="btn" onclick="startGame()">▶ PLAY AGAIN</button>
   `;
@@ -138,42 +160,77 @@ function endGame() {
 }
 
 const SHOP_ITEMS = [
-  { key: "shotgun", title: "SHOTGUN", cost: 80, ammo: 20 },
-  { key: "rocket", title: "ROCKET", cost: 140, ammo: 6 },
+  { key: "shotgun", title: "SHOTGUN", cost: 80, ammo: 20, type: "weapon" },
+  { key: "rocket", title: "ROCKET", cost: 140, ammo: 6, type: "weapon" },
+  { key: "steel", title: "STEEL SKIN", cost: 120, type: "skin", color: "#888888" },
+  { key: "neon", title: "NEON SKIN", cost: 250, type: "skin", color: "#00ffcc" },
+  { key: "gold", title: "GOLD SKIN", cost: 500, type: "skin", color: "#ffaa00" },
+  { key: "cyborg", title: "CYBORG SKIN", cost: 1000, type: "skin", color: "#7722ff" },
 ];
 
 function renderShop() {
-  const ov = document.getElementById("overlay");
+  const ov = document.getElementById("shopModal");
   ov.innerHTML = `
-    <h1>🛒 SHOP</h1>
-    <p class="sub">Buy better guns using coins earned from kills.</p>
-    <div style="width:100%;margin-top:16px;display:grid;gap:12px;text-align:left;">
-      ${SHOP_ITEMS.map(
-        (item, idx) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:14px;">
-          <div>
-            <div style="font-weight:700;color:#ffd660;">${idx + 1}. ${item.title}</div>
-            <div style="font-size:13px;color:#ddd;">Cost: ${item.cost} coins</div>
-          </div>
-          <button class="btn" onclick="buyWeapon('${item.key}')">BUY</button>
-        </div>
-      `,
-      ).join("")}
+    <h1>🛒 ARMORY</h1>
+    <p class="sub">Upgrade your arsenal for the next run.</p>
+    <div style="width:100%;text-align:center;margin-bottom:12px;">
+      <span style="background:rgba(255,187,0,0.1);color:#ffcc00;padding:6px 12px;border-radius:12px;border:1px solid rgba(255,187,0,0.3);font-weight:700;">🪙 ${coins} COINS</span>
     </div>
-    <p style="margin-top:18px;color:#ccc;">Coins available: ${coins}</p>
-    <button class="btn" onclick="toggleShop()">Close shop</button>
+    <div style="width:100%;display:grid;gap:12px;text-align:left;max-height:200px;overflow-y:auto;padding-right:8px;">
+      ${SHOP_ITEMS.map((item, idx) => {
+        const isSkin = item.type === "skin";
+        const isOwned = isSkin && ownedSkins.includes(item.key);
+        const isEquipped = isSkin && selectedSkin === item.key;
+        const canAfford = isOwned || coins >= item.cost;
+        let btnStyle = canAfford ? "" : "opacity:0.5; filter:grayscale(100%);";
+        if (isEquipped) btnStyle = "opacity:0.6;background:#555;border-color:#444;";
+        
+        let btnText = 'BUY';
+        if (isEquipped) btnText = 'EQUIPPED';
+        else if (isOwned) btnText = 'EQUIP';
+        else if (!canAfford) btnText = 'LOCKED';
+
+        return `
+        <div class="shop-item">
+          <div>
+            <div style="font-weight:700;color:#ffd660;font-size:16px;">
+              ${item.title}
+              ${item.type === 'skin' ? `<span style="display:inline-block;vertical-align:middle;width:14px;height:14px;border-radius:3px;background:${item.color};margin-left:6px;box-shadow:0 0 4px ${item.color}, inset 0 0 4px rgba(255,255,255,0.5);"></span>` : ''}
+            </div>
+            <div style="font-size:13px;color:#aaa;margin-top:4px;">🔑 Cost: <span style="color:${isOwned ? '#44ff44' : (canAfford ? '#ffcc00' : '#ff4444')}">${isOwned ? 'OWNED' : item.cost}</span></div>
+          </div>
+          <button class="btn" style="margin-top:0;padding:8px 20px;font-size:13px; ${btnStyle}" onclick="buyWeapon('${item.key}')">
+            ${btnText}
+          </button>
+        </div>
+      `}).join("")}
+    </div>
+    <p style="margin-top:16px;color:#888;font-size:13px;">Current skin: <span style="color:#fff">${selectedSkin.toUpperCase()}</span></p>
+    <button class="btn" style="background:transparent;box-shadow:none;border:1px solid rgba(255,255,255,0.2)" onclick="toggleShop()">Close Armory</button>
   `;
+  ov.style.zIndex = "999";
   ov.style.display = "flex";
+  
+  // Explicitly hide the start/game-over screen so they don't fight for clicks or z-index
+  if (!gameRunning) {
+    const mainOverlay = document.getElementById("overlay");
+    if (mainOverlay) mainOverlay.style.display = "none";
+  }
 }
 
 function closeShop() {
-  const ov = document.getElementById("overlay");
+  const ov = document.getElementById("shopModal");
   ov.style.display = "none";
   shopOpen = false;
+  
+  // Bring back the start/game-over screen
+  if (!gameRunning) {
+    const mainOverlay = document.getElementById("overlay");
+    if (mainOverlay) mainOverlay.style.display = "flex";
+  }
 }
 
 function toggleShop() {
-  if (!gameRunning) return;
   shopOpen = !shopOpen;
   if (shopOpen) {
     renderShop();
@@ -184,14 +241,35 @@ function toggleShop() {
 
 function buyWeapon(key) {
   const item = SHOP_ITEMS.find((i) => i.key === key);
-  if (!item || coins < item.cost) return;
-  coins -= item.cost;
-  WEAPONS[key].ammo = item.ammo;
-  player.weapon = key;
+  if (!item) return;
+
+  const isSkin = item.type === "skin";
+  const isOwned = isSkin && ownedSkins.includes(key);
+
+  if (!isOwned) {
+    if (coins < item.cost) {
+      alert("NOT ENOUGH COINS! Defeat enemies to earn more.");
+      return;
+    }
+    coins -= item.cost;
+    if (isSkin) {
+      ownedSkins.push(key);
+    }
+  }
+
+  if (isSkin) {
+    setPlayerSkin(item.key);
+  } else {
+    WEAPONS[key].ammo = item.ammo;
+    player.weapon = key;
+  }
+
+  savePersistentData();
   updateWeaponUI();
-  document.getElementById("coinDisplay").textContent = coins;
+  const coinLabel = document.getElementById("coinDisplay");
+  if (coinLabel) coinLabel.textContent = coins;
   playSound("pickup");
-  toggleShop();
+  renderShop(); // Keep shop open and update the UI (coin balance, locked states)
 }
 
 // ═══════════════════════════════════════════════════
@@ -199,7 +277,7 @@ function buyWeapon(key) {
 // ═══════════════════════════════════════════════════
 document.addEventListener("keydown", (e) => {
   if (e.key === "b" || e.key === "B") {
-    if (gameRunning) toggleShop();
+    toggleShop();
     e.preventDefault();
     return;
   }
@@ -230,5 +308,6 @@ canvas.addEventListener("contextmenu", (e) => {
 renderLeaderboard();
 // NEW: Initialize UI state on load
 setDifficulty("normal");
+updateHudUI();
 toggleSound(true);
 loop();

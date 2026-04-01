@@ -323,11 +323,14 @@ function throwGrenade() {
 }
 
 function updateWeaponUI() {
-  const wep = WEAPONS[player.weapon];
+  const wep = WEAPONS[player.weapon || "rifle"];
+  if (!wep) return;
   document.getElementById("weaponIcon").textContent = wep.icon;
   document.getElementById("weaponName").textContent = wep.name;
   document.getElementById("ammoDisplay").textContent =
     wep.ammo < 0 ? "∞" : wep.ammo;
+  const skinLabel = document.getElementById("skinDisplay");
+  if (skinLabel) skinLabel.textContent = (player.skin || selectedSkin || "default").toUpperCase();
 }
 
 // ═══════════════════════════════════════════════════
