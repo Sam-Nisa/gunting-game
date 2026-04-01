@@ -160,6 +160,7 @@ let shopOpen = false;
 const SHOP_ITEMS = [
   { key: "shotgun", type: "weapon", title: "SHOTGUN", cost: 80, ammo: 20 },
   { key: "rocket", type: "weapon", title: "ROCKET", cost: 140, ammo: 6 },
+  { key: "default", type: "skin", title: "DEFAULT SKIN", cost: 0 },
   { key: "cyborg", type: "skin", title: "CYBORG SKIN", cost: 200 },
   { key: "ninja", type: "skin", title: "NINJA SKIN", cost: 150 },
 ];
