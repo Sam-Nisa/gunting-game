@@ -15,8 +15,10 @@ function toggleSound(forceState) {
   soundOn = forceState !== undefined ? forceState : !soundOn;
   masterGain.gain.setValueAtTime(soundOn ? 1 : 0, AC.currentTime);
   const icon = soundOn ? "🔊" : "🔇";
-  document.getElementById("soundToggleBtn").textContent = icon;
-  document.getElementById("inGameSoundToggle").textContent = icon;
+  const btn1 = document.getElementById("soundToggleBtn");
+  if (btn1) btn1.innerHTML = `${icon} SOUND`;
+  const btn2 = document.getElementById("inGameSoundToggle");
+  if (btn2) btn2.textContent = icon;
 
   if (soundOn && gameRunning) {
     startMusic();
@@ -2088,4 +2090,5 @@ renderLeaderboard();
 // NEW: Initialize UI state on load
 setDifficulty("normal");
 toggleSound(true);
+document.getElementById("coinDisplay").textContent = coins;
 loop();

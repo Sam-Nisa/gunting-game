@@ -13,6 +13,7 @@ let score = 0,
   gameRunning = false;
 let screenShake = 0;
 let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
+let coins = parseInt(localStorage.getItem("mf_coins") || "0");
 
 // NEW: Global speed modifier. 1.0 is normal speed. 0.5 is slower than current.
 const gameSpeed = 0.4;
@@ -183,6 +184,7 @@ function resetPlayer() {
     frameTimer: 0,
     shootAnim: 0,
     weapon: "rifle",
+    skin: localStorage.getItem("mf_skin") || "default",
     grenades: 3,
     jumpPressed: false,
     grenadeCD: 0,

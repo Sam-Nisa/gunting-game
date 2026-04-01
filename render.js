@@ -50,33 +50,48 @@ function drawPlayer(p) {
   ctx.fillStyle = "#4a2a10";
   ctx.fillRect(-9, legY + legSwing, 10, 6);
   ctx.fillRect(1, legY - legSwing, 10, 6);
+  const isCyborg = p.skin === "cyborg";
+  const isNinja = p.skin === "ninja";
+
   // Pants
-  ctx.fillStyle = "#1a3a6a";
+  ctx.fillStyle = isNinja ? "#111" : isCyborg ? "#333" : "#1a3a6a";
   ctx.fillRect(-9, 8, 9, pantHeight);
   ctx.fillRect(1, 8, 9, pantHeight);
   // Body
-  const bodyCol =
+  let bodyCol =
     p.weapon === "rocket"
       ? "#cc4400"
       : p.weapon === "shotgun"
         ? "#226633"
         : "#3a7bd5";
+  if (isNinja) bodyCol = "#222";
+  if (isCyborg) bodyCol = "#555";
   ctx.fillStyle = bodyCol;
   ctx.fillRect(-11, bodyTop, 22, bodyHeight);
   // Belt
-  ctx.fillStyle = "#884400";
+  ctx.fillStyle = isNinja ? "#000" : isCyborg ? "#111" : "#884400";
   ctx.fillRect(-11, 8, 22, 4);
   // Head
-  ctx.fillStyle = "#f5c78e";
+  ctx.fillStyle = isCyborg ? "#ccc" : isNinja ? "#f5c78e" : "#f5c78e";
   ctx.fillRect(-7, headTop, 14, 14);
   // Hair
-  ctx.fillStyle = "#b87020";
+  ctx.fillStyle = isNinja ? "#000" : isCyborg ? "#888" : "#b87020";
   ctx.fillRect(-7, headTop, 14, hairHeight);
+  if (isNinja) {
+    // Ninja mask
+    ctx.fillStyle = "#222";
+    ctx.fillRect(-7, headTop + hairHeight, 14, 5); // top mask
+    ctx.fillRect(-7, eyeY + 4, 14, 5); // bottom mask
+  }
   // Eye
-  ctx.fillStyle = "#222";
+  ctx.fillStyle = isCyborg ? "#f00" : isNinja ? "#fff" : "#222";
   ctx.fillRect(2, eyeY, 3, 3);
+  if(isCyborg) {
+    ctx.fillStyle = "#f00";
+    ctx.fillRect(-4, eyeY, 3, 3);
+  }
   // Shoulder pad
-  ctx.fillStyle = "#2255aa";
+  ctx.fillStyle = isNinja ? "#111" : isCyborg ? "#999" : "#2255aa";
   ctx.fillRect(-13, Math.max(-10, bodyTop), 6, 8);
   // Gun visual
   const wep = WEAPONS[p.weapon];
@@ -798,6 +813,7 @@ function update() {
             e.dead = true;
             kills++;
             score += e.type === "heavy" ? 300 : 150;
+            addCoins(e.type === "heavy" ? 3 : e.type === "drone" ? 2 : 1);
           }
         }
       }
@@ -847,6 +863,7 @@ function update() {
           e.dead = true;
           kills++;
           score += e.type === "heavy" ? 300 : e.type === "drone" ? 200 : 100;
+          addCoins(e.type === "heavy" ? 3 : e.type === "drone" ? 2 : 1);
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ff2200", 14);
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ffcc44", 6);
           if (Math.random() < 0.4) dropPickup(e.x + e.w / 2, e.y);
@@ -868,6 +885,7 @@ function update() {
           e.dead = true;
           kills++;
           score += 200;
+          addCoins(e.type === "heavy" ? 3 : e.type === "drone" ? 2 : 1);
           spawnParticles(ex2, ey, "#ff2200", 10);
         }
       }
@@ -1022,6 +1040,7 @@ function killBoss() {
   boss.dead = true;
   kills += 10;
   score += 3000 + boss.level * 1000;
+  addCoins(20 + boss.level * 5);
   spawnExplosion(boss.x + boss.w / 2, boss.y + boss.h / 2, 120);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ff4400", 30, 10);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ffcc44", 20, 8);

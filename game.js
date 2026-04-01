@@ -88,7 +88,6 @@ function startGame() {
   if (AC.state === "suspended") AC.resume();
   document.getElementById("overlay").style.display = "none";
   score = 0;
-  coins = 0;
   kills = 0;
   wave = 1;
   bullets = [];
@@ -107,6 +106,7 @@ function startGame() {
   resetPlayer();
   updateWeaponUI();
   document.getElementById("grenadeDisplay2").textContent = "3";
+  document.getElementById("coinDisplay").textContent = coins;
   spawnWave(1);
   gameRunning = true;
   startMusic();
@@ -134,7 +134,10 @@ function endGame() {
         <button id="diffNormal" class="diffBtn" onclick="setDifficulty('normal')">NORMAL</button>
         <button id="diffHard" class="diffBtn" onclick="setDifficulty('hard')">HARD</button>
       </div>
-      <div><span id="soundToggleBtn" class="soundToggle" onclick="toggleSound()">🔊</span></div>
+      <div class="actionRow">
+        <button id="soundToggleBtn" class="actionBtn" onclick="toggleSound()">🔊 SOUND</button>
+        <button class="actionBtn" onclick="toggleShop()">🛒 SHOP</button>
+      </div>
     </div>
     <button class="btn" onclick="startGame()">▶ PLAY AGAIN</button>
   `;
@@ -144,28 +147,72 @@ function endGame() {
   ov.style.display = "flex";
 }
 
+function addCoins(amount) {
+  coins += amount;
+  localStorage.setItem("mf_coins", coins);
+  const cd = document.getElementById("coinDisplay");
+  if(cd) cd.textContent = coins;
+}
+
+let previousOverlayHTML = "";
+let shopOpen = false;
+
 const SHOP_ITEMS = [
-  { key: "shotgun", title: "SHOTGUN", cost: 80, ammo: 20 },
-  { key: "rocket", title: "ROCKET", cost: 140, ammo: 6 },
+  { key: "shotgun", type: "weapon", title: "SHOTGUN", cost: 80, ammo: 20 },
+  { key: "rocket", type: "weapon", title: "ROCKET", cost: 140, ammo: 6 },
+  { key: "cyborg", type: "skin", title: "CYBORG SKIN", cost: 200 },
+  { key: "ninja", type: "skin", title: "NINJA SKIN", cost: 150 },
 ];
 
 function renderShop() {
   const ov = document.getElementById("overlay");
+  if (!gameRunning && !previousOverlayHTML) {
+    previousOverlayHTML = ov.innerHTML;
+  }
+  
+  const unlockedSkins = JSON.parse(localStorage.getItem("mf_unlocked_skins") || '["default"]');
+
   ov.innerHTML = `
     <h1>🛒 SHOP</h1>
-    <p class="sub">Buy better guns using coins earned from kills.</p>
+    <p class="sub">Buy better guns & skins using coins earned from kills.</p>
     <div style="width:100%;margin-top:16px;display:grid;gap:12px;text-align:left;">
-      ${SHOP_ITEMS.map(
-        (item, idx) => `
+      ${SHOP_ITEMS.map((item, idx) => {
+        let isSkin = item.type === "skin";
+        let owned = isSkin && unlockedSkins.includes(item.key);
+        let equipped = isSkin && player.skin === item.key;
+        let canAfford = coins >= item.cost;
+        
+        let btnText = "BUY";
+        let onClickAction = `buyItem('${item.key}')`;
+        let costDisplay = `Cost: ${item.cost} coins`;
+        let exStyle = "padding: 8px 16px; font-size: 14px; margin-top: 0;";
+
+        if (owned) {
+            costDisplay = "UNLOCKED";
+            if (equipped) {
+                btnText = "EQUIPPED";
+                onClickAction = "";
+                exStyle += "opacity:0.5;cursor:not-allowed;";
+            } else {
+                btnText = "EQUIP";
+                onClickAction = `equipSkin('${item.key}')`;
+            }
+        } else if (!canAfford) {
+            btnText = "NO COINS";
+            onClickAction = "";
+            exStyle += "opacity:0.5;cursor:not-allowed;";
+        }
+        
+        return `
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:14px;">
           <div>
             <div style="font-weight:700;color:#ffd660;">${idx + 1}. ${item.title}</div>
-            <div style="font-size:13px;color:#ddd;">Cost: ${item.cost} coins</div>
+            <div style="font-size:13px;color:#ddd;">${costDisplay}</div>
           </div>
-          <button class="btn" onclick="buyWeapon('${item.key}')">BUY</button>
+          <button class="btn" style="${exStyle}" onclick="${onClickAction}">${btnText}</button>
         </div>
-      `,
-      ).join("")}
+      `;
+      }).join("")}
     </div>
     <p style="margin-top:18px;color:#ccc;">Coins available: ${coins}</p>
     <button class="btn" onclick="toggleShop()">Close shop</button>
@@ -173,32 +220,59 @@ function renderShop() {
   ov.style.display = "flex";
 }
 
-function closeShop() {
-  const ov = document.getElementById("overlay");
-  ov.style.display = "none";
-  shopOpen = false;
+function equipSkin(key) {
+    player.skin = key;
+    localStorage.setItem("mf_skin", key);
+    playSound("pickup");
+    renderShop();
 }
 
-function toggleShop() {
-  if (!gameRunning) return;
-  shopOpen = !shopOpen;
-  if (shopOpen) {
-    renderShop();
+function closeShop() {
+  const ov = document.getElementById("overlay");
+  shopOpen = false;
+  
+  if (!gameRunning) {
+    ov.innerHTML = previousOverlayHTML;
+    previousOverlayHTML = "";
+    setDifficulty(difficulty);
+    toggleSound(soundOn);
+    try { renderLeaderboard(); } catch (e) {}
   } else {
-    closeShop();
+    ov.style.display = "none";
   }
 }
 
-function buyWeapon(key) {
+function toggleShop() {
+  if (shopOpen) {
+    closeShop();
+  } else {
+    shopOpen = true;
+    renderShop();
+  }
+}
+
+function buyItem(key) {
   const item = SHOP_ITEMS.find((i) => i.key === key);
   if (!item || coins < item.cost) return;
+  
   coins -= item.cost;
-  WEAPONS[key].ammo = item.ammo;
-  player.weapon = key;
-  updateWeaponUI();
+  localStorage.setItem("mf_coins", coins);
+  
+  if (item.type === "weapon") {
+    WEAPONS[key].ammo = item.ammo;
+    player.weapon = key;
+    updateWeaponUI();
+  } else if (item.type === "skin") {
+    player.skin = key;
+    localStorage.setItem("mf_skin", key);
+    let unlocked = JSON.parse(localStorage.getItem("mf_unlocked_skins") || '["default"]');
+    if (!unlocked.includes(key)) unlocked.push(key);
+    localStorage.setItem("mf_unlocked_skins", JSON.stringify(unlocked));
+  }
+  
   document.getElementById("coinDisplay").textContent = coins;
   playSound("pickup");
-  toggleShop();
+  renderShop();
 }
 
 // ═══════════════════════════════════════════════════
@@ -238,4 +312,5 @@ renderLeaderboard();
 // NEW: Initialize UI state on load
 setDifficulty("normal");
 toggleSound(true);
+document.getElementById("coinDisplay").textContent = coins;
 loop();
