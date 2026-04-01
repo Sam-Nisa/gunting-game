@@ -155,7 +155,8 @@ function renderShop() {
     <h1>🛒 SHOP</h1>
     <p class="sub">Buy better guns using coins earned from kills.</p>
     <div style="width:100%;margin-top:16px;display:grid;gap:12px;text-align:left;">
-      ${SHOP_ITEMS.map((item, idx) => `
+      ${SHOP_ITEMS.map(
+        (item, idx) => `
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:14px;">
           <div>
             <div style="font-weight:700;color:#ffd660;">${idx + 1}. ${item.title}</div>
@@ -163,7 +164,8 @@ function renderShop() {
           </div>
           <button class="btn" onclick="buyWeapon('${item.key}')">BUY</button>
         </div>
-      `).join("")}
+      `,
+      ).join("")}
     </div>
     <p style="margin-top:18px;color:#ccc;">Coins available: ${coins}</p>
     <button class="btn" onclick="toggleShop()">Close shop</button>
