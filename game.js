@@ -67,6 +67,7 @@ function saveScore(s, k, w) {
 
 function renderLeaderboard() {
   const ul = document.getElementById("lbList");
+  if (!ul) return;
   if (!highScores.length) {
     ul.innerHTML = "<li>— No scores yet —</li>";
     return;
@@ -116,7 +117,6 @@ function endGame() {
   stopMusic();
   playSound("die");
   saveScore(score, kills, wave);
-  renderLeaderboard();
   const ov = document.getElementById("overlay");
   // MODIFIED: Added settings controls back to the Game Over screen
   ov.innerHTML = `
@@ -125,7 +125,7 @@ function endGame() {
     <p style="color:#aaa">Kills: ${kills} &nbsp;|&nbsp; Wave: ${wave} &nbsp;|&nbsp; Difficulty: ${difficulty.toUpperCase()}</p>
     <div id="leaderboard" style="margin-top:14px;text-align:center">
       <h3 style="color:#ff8800;font-size:13px;letter-spacing:2px;margin-bottom:6px">🏆 HIGH SCORES</h3>
-      <ul id="lbList" style="list-style:none;font-size:12px;color:#ccc">${highScores.map((s, i) => `<li>${["🥇", "🥈", "🥉", "4.", "5.", "6.", "7.", "8."][i] || ""} <span style="color:#ffcc00">${s.score}</span> pts — Wave ${s.wave}</li>`).join("")}</ul>
+      <ul id="lbList" style="list-style:none;font-size:12px;color:#ccc"></ul>
     </div>
     <div class="settingsWrap">
       <div class="difficultySelect">
@@ -140,6 +140,7 @@ function endGame() {
   `;
   setDifficulty(difficulty); // Re-apply active class to current difficulty
   toggleSound(soundOn); // Re-apply correct sound icon
+  renderLeaderboard();
   ov.style.display = "flex";
 }
 
