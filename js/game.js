@@ -57,7 +57,7 @@ function loop(timestamp) {
 
   if (typeof update === "function") update();
   else console.warn("update() is not available yet");
-  
+
   draw();
   requestAnimationFrame(loop);
 }

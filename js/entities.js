@@ -308,43 +308,12 @@ function throwGrenade() {
   if (player.grenades <= 0 || player.grenadeCD > 0) return;
   player.grenades--;
   player.grenadeCD = 30;
-
-  const bx = player.x + player.w / 2;
-  const by = player.y;
-  
-  let tx = mouseX + camX,
-      ty = mouseY;
-  let minDist = Infinity;
-  
-  for (const e of enemies) {
-    if (e.dead) continue;
-    const ex = e.x + e.w / 2, ey = e.y + e.h / 2;
-    const dx2 = ex - bx, dy2 = ey - by;
-    const dist = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-    if (dist < 400 && dist < minDist) {
-      minDist = dist;
-      tx = ex;
-      ty = ey;
-    }
-  }
-  if (boss && !boss.dead) {
-    const ex = boss.x + boss.w / 2, ey = boss.y + boss.h / 2;
-    const dx2 = ex - bx, dy2 = ey - by;
-    const dist = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-    if (dist < 600 && dist < minDist) {
-      minDist = dist;
-      tx = ex;
-      ty = ey;
-    }
-  }
-
-  const dx = tx - bx,
-        dy = ty - 80 - by;
+  const dx = mouseX + camX - player.x,
+    dy = mouseY - 80 - player.y;
   const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
   grenades.push({
-    x: bx,
-    y: by,
+    x: player.x + player.w / 2,
+    y: player.y,
     vx: (dx / len) * 12,
     vy: -8,
     life: 120,

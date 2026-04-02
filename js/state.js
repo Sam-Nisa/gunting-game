@@ -13,7 +13,7 @@ let score = 0,
   gameRunning = false,
   shopOpen = false,
   coins = Number(localStorage.getItem("mf_coins") || "0");
-  
+
 let savedSkin = localStorage.getItem("mf_skin") || "player1";
 if (savedSkin === "default") savedSkin = "player1";
 let selectedSkin = savedSkin;

@@ -982,7 +982,7 @@ function update() {
         WEAPONS.rocket.ammo = Math.max(0, WEAPONS.rocket.ammo) + 6;
         player.weapon = "rocket";
       } else if (pu.type === "grenade") {
-        player.grenades += 1;
+        player.grenades = Math.min(player.grenades + 2, 9);
       } else {
         score += 300;
       }
