@@ -46,43 +46,49 @@ function drawPlayer(p) {
   ctx.ellipse(0, p.h / 2 + 2, 14, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Boots
-  ctx.fillStyle = "#4a2a10";
-  ctx.fillRect(-9, legY + legSwing, 10, 6);
-  ctx.fillRect(1, legY - legSwing, 10, 6);
-  // Pants
-  ctx.fillStyle = "#1a3a6a";
-  ctx.fillRect(-9, 8, 9, pantHeight);
-  ctx.fillRect(1, 8, 9, pantHeight);
-  // Body
-  let bodyCol = "#3a7bd5"; // default blue
-  if (p.skin && p.skin !== "default") {
-    if (p.skin === "steel") bodyCol = "#888888";
-    else if (p.skin === "neon") bodyCol = "#00ffcc";
-    else if (p.skin === "gold") bodyCol = "#ffaa00";
-    else if (p.skin === "cyborg") bodyCol = "#7722ff";
-  } else if (p.weapon === "rocket") {
-    bodyCol = "#cc4400";
-  } else if (p.weapon === "shotgun") {
-    bodyCol = "#226633";
+  const isImageSkin = p.skin && p.skin.startsWith("player") && typeof playerImages !== 'undefined' && playerImages[p.skin] && playerImages[p.skin].complete;
+
+  if (isImageSkin) {
+    ctx.drawImage(playerImages[p.skin], -p.w/2 - 10, -p.h/2 - 10 + (crouch?8:0), p.w + 20, p.h + 10);
+  } else {
+    // Boots
+    ctx.fillStyle = "#4a2a10";
+    ctx.fillRect(-9, legY + legSwing, 10, 6);
+    ctx.fillRect(1, legY - legSwing, 10, 6);
+    // Pants
+    ctx.fillStyle = "#1a3a6a";
+    ctx.fillRect(-9, 8, 9, pantHeight);
+    ctx.fillRect(1, 8, 9, pantHeight);
+    // Body
+    let bodyCol = "#3a7bd5"; // default blue
+    if (p.skin && p.skin !== "default") {
+      if (p.skin === "steel") bodyCol = "#888888";
+      else if (p.skin === "neon") bodyCol = "#00ffcc";
+      else if (p.skin === "gold") bodyCol = "#ffaa00";
+      else if (p.skin === "cyborg") bodyCol = "#7722ff";
+    } else if (p.weapon === "rocket") {
+      bodyCol = "#cc4400";
+    } else if (p.weapon === "shotgun") {
+      bodyCol = "#226633";
+    }
+    ctx.fillStyle = bodyCol;
+    ctx.fillRect(-11, bodyTop, 22, bodyHeight);
+    // Belt
+    ctx.fillStyle = "#884400";
+    ctx.fillRect(-11, 8, 22, 4);
+    // Head
+    ctx.fillStyle = "#f5c78e";
+    ctx.fillRect(-7, headTop, 14, 14);
+    // Hair
+    ctx.fillStyle = "#b87020";
+    ctx.fillRect(-7, headTop, 14, hairHeight);
+    // Eye
+    ctx.fillStyle = "#222";
+    ctx.fillRect(2, eyeY, 3, 3);
+    // Shoulder pad
+    ctx.fillStyle = "#2255aa";
+    ctx.fillRect(-13, Math.max(-10, bodyTop), 6, 8);
   }
-  ctx.fillStyle = bodyCol;
-  ctx.fillRect(-11, bodyTop, 22, bodyHeight);
-  // Belt
-  ctx.fillStyle = "#884400";
-  ctx.fillRect(-11, 8, 22, 4);
-  // Head
-  ctx.fillStyle = "#f5c78e";
-  ctx.fillRect(-7, headTop, 14, 14);
-  // Hair
-  ctx.fillStyle = "#b87020";
-  ctx.fillRect(-7, headTop, 14, hairHeight);
-  // Eye
-  ctx.fillStyle = "#222";
-  ctx.fillRect(2, eyeY, 3, 3);
-  // Shoulder pad
-  ctx.fillStyle = "#2255aa";
-  ctx.fillRect(-13, Math.max(-10, bodyTop), 6, 8);
   // Gun visual
   const wep = WEAPONS[p.weapon];
   const shotProgress = p.shootAnim / 14;
@@ -1026,8 +1032,10 @@ function update() {
   }
 
   // Update UI
-  document.getElementById("healthFill").style.width =
-    (player.hp / player.maxHp) * 100 + "%";
+  const hpPercent = Math.max(0, Math.floor((player.hp / player.maxHp) * 100));
+  document.getElementById("healthFill").style.width = hpPercent + "%";
+  const hpPercEl = document.getElementById("healthPerc");
+  if (hpPercEl) hpPercEl.textContent = hpPercent + "%";
   document.getElementById("killsDisplay").textContent = kills;
   document.getElementById("livesDisplay").textContent = player.lives;
   document.getElementById("scoreDisplay").textContent = score;

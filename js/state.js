@@ -12,9 +12,23 @@ let score = 0,
   wave = 1,
   gameRunning = false,
   shopOpen = false,
-  coins = Number(localStorage.getItem("mf_coins") || "0"),
-  selectedSkin = localStorage.getItem("mf_skin") || "default";
-let ownedSkins = JSON.parse(localStorage.getItem("mf_owned_skins") || '["default"]');
+  coins = Number(localStorage.getItem("mf_coins") || "0");
+  
+let savedSkin = localStorage.getItem("mf_skin") || "player1";
+if (savedSkin === "default") savedSkin = "player1";
+let selectedSkin = savedSkin;
+
+let savedOwned = JSON.parse(localStorage.getItem("mf_owned_skins") || '["player1"]');
+if (savedOwned.includes("default")) {
+  savedOwned[savedOwned.indexOf("default")] = "player1";
+}
+let ownedSkins = savedOwned;
+
+const playerImages = {};
+for (let i = 1; i <= 6; i++) {
+  playerImages[`player${i}`] = new Image();
+  playerImages[`player${i}`].src = `./img/player${i}.png`;
+}
 let screenShake = 0;
 let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
 
@@ -175,8 +189,8 @@ function resetPlayer() {
     vy: 0,
     w: 28,
     h: 40,
-    hp: 100,
-    maxHp: 100,
+    hp: 500,
+    maxHp: 500,
     lives: 3,
     onGround: false,
     facing: 1,
@@ -188,7 +202,7 @@ function resetPlayer() {
     shootAnim: 0,
     weapon: "rifle",
     grenades: 3,
-    skin: selectedSkin || "default",
+    skin: selectedSkin || "player1",
     jumpPressed: false,
     grenadeCD: 0,
     crouching: false,
@@ -210,7 +224,7 @@ function respawnPlayer() {
   player.shootAnim = 0;
   player.weapon = "rifle";
   player.grenades = 3;
-  player.skin = selectedSkin || "default";
+  player.skin = selectedSkin || "player1";
   player.jumpPressed = false;
   player.grenadeCD = 0;
   player.crouching = false;

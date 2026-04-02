@@ -162,10 +162,12 @@ function endGame() {
 const SHOP_ITEMS = [
   { key: "shotgun", title: "SHOTGUN", cost: 80, ammo: 20, type: "weapon" },
   { key: "rocket", title: "ROCKET", cost: 140, ammo: 6, type: "weapon" },
-  { key: "steel", title: "STEEL SKIN", cost: 120, type: "skin", color: "#888888" },
-  { key: "neon", title: "NEON SKIN", cost: 250, type: "skin", color: "#00ffcc" },
-  { key: "gold", title: "GOLD SKIN", cost: 500, type: "skin", color: "#ffaa00" },
-  { key: "cyborg", title: "CYBORG SKIN", cost: 1000, type: "skin", color: "#7722ff" },
+  { key: "player1", title: "PLAYER 1", cost: 30000, type: "skin" },
+  { key: "player2", title: "PLAYER 2", cost: 50000, type: "skin" },
+  { key: "player3", title: "PLAYER 3", cost: 650000, type: "skin" },
+  { key: "player4", title: "PLAYER 4", cost: 700000, type: "skin" },
+  { key: "player5", title: "PLAYER 5", cost: 850000, type: "skin" },
+  { key: "player6", title: "PLAYER 6", cost: 1000000, type: "skin" },
 ];
 
 function renderShop() {
@@ -193,9 +195,10 @@ function renderShop() {
         return `
         <div class="shop-item">
           <div>
-            <div style="font-weight:700;color:#ffd660;font-size:16px;">
+            <div style="font-weight:700;color:#ffd660;font-size:16px;display:flex;align-items:center;">
               ${item.title}
-              ${item.type === 'skin' ? `<span style="display:inline-block;vertical-align:middle;width:14px;height:14px;border-radius:3px;background:${item.color};margin-left:6px;box-shadow:0 0 4px ${item.color}, inset 0 0 4px rgba(255,255,255,0.5);"></span>` : ''}
+              ${item.type === 'skin' && item.key.startsWith('player') ? `<img src="./img/${item.key}.png" style="height:32px;margin-left:12px;" alt="${item.title}">` : ''}
+              ${item.type === 'skin' && item.color ? `<span style="display:inline-block;vertical-align:middle;width:14px;height:14px;border-radius:3px;background:${item.color};margin-left:6px;box-shadow:0 0 4px ${item.color}, inset 0 0 4px rgba(255,255,255,0.5);"></span>` : ''}
             </div>
             <div style="font-size:13px;color:#aaa;margin-top:4px;">🔑 Cost: <span style="color:${isOwned ? '#44ff44' : (canAfford ? '#ffcc00' : '#ff4444')}">${isOwned ? 'OWNED' : item.cost}</span></div>
           </div>
@@ -287,11 +290,18 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keyup", (e) => {
   keys[e.key] = false;
 });
-canvas.addEventListener("click", () => {
-  if (gameRunning) {
+canvas.addEventListener("mousedown", (e) => {
+  if (e.button === 0 && gameRunning) {
     keys[" "] = true;
-    setTimeout(() => (keys[" "] = false), 80);
   }
+});
+canvas.addEventListener("mouseup", (e) => {
+  if (e.button === 0) {
+    keys[" "] = false;
+  }
+});
+canvas.addEventListener("mouseleave", () => {
+  keys[" "] = false;
 });
 canvas.addEventListener("mousemove", (e) => {
   const r = canvas.getBoundingClientRect();
