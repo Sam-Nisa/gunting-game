@@ -976,13 +976,13 @@ function update() {
       if (pu.type === "health") {
         player.hp = Math.min(player.maxHp, player.hp + 35);
       } else if (pu.type === "shotgun") {
-        WEAPONS.shotgun.ammo = 20;
+        WEAPONS.shotgun.ammo = Math.max(0, WEAPONS.shotgun.ammo) + 10;
         player.weapon = "shotgun";
       } else if (pu.type === "rocket") {
-        WEAPONS.rocket.ammo = 6;
+        WEAPONS.rocket.ammo = Math.max(0, WEAPONS.rocket.ammo) + 6;
         player.weapon = "rocket";
       } else if (pu.type === "grenade") {
-        player.grenades = Math.min(player.grenades + 2, 9);
+        player.grenades += 1;
       } else {
         score += 300;
       }

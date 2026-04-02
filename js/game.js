@@ -275,7 +275,7 @@ function buyWeapon(key) {
   if (isSkin) {
     setPlayerSkin(item.key);
   } else {
-    WEAPONS[key].ammo = item.ammo;
+    WEAPONS[key].ammo = Math.max(0, WEAPONS[key].ammo) + item.ammo;
     player.weapon = key;
   }
 
