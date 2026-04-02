@@ -33,7 +33,9 @@ let screenShake = 0;
 let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
 
 // NEW: Global speed modifier. 1.0 is normal speed. 0.5 is slower than current.
-const gameSpeed = 0.4;
+let gameSpeed = 0.4;
+window.baseGameSpeed = 0.4;
+window.timeScale = 1;
 
 // Background image support
 const BG_IMAGE_COUNT = 5;

@@ -43,9 +43,21 @@ function draw() {
   ctx.restore();
 }
 
-function loop() {
+let lastTime = 0;
+
+function loop(timestamp) {
+  if (!lastTime) lastTime = timestamp || performance.now();
+  let deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+
+  if (deltaTime > 250) deltaTime = 250;
+
+  timeScale = deltaTime / (1000 / 144);
+  gameSpeed = baseGameSpeed * timeScale;
+
   if (typeof update === "function") update();
   else console.warn("update() is not available yet");
+  
   draw();
   requestAnimationFrame(loop);
 }
@@ -180,19 +192,19 @@ function renderShop() {
     </div>
     <div style="width:100%;display:grid;gap:12px;text-align:left;max-height:200px;overflow-y:auto;padding-right:8px;">
       ${SHOP_ITEMS.map((item, idx) => {
-        const isSkin = item.type === "skin";
-        const isOwned = isSkin && ownedSkins.includes(item.key);
-        const isEquipped = isSkin && selectedSkin === item.key;
-        const canAfford = isOwned || coins >= item.cost;
-        let btnStyle = canAfford ? "" : "opacity:0.5; filter:grayscale(100%);";
-        if (isEquipped) btnStyle = "opacity:0.6;background:#555;border-color:#444;";
-        
-        let btnText = 'BUY';
-        if (isEquipped) btnText = 'EQUIPPED';
-        else if (isOwned) btnText = 'EQUIP';
-        else if (!canAfford) btnText = 'LOCKED';
+    const isSkin = item.type === "skin";
+    const isOwned = isSkin && ownedSkins.includes(item.key);
+    const isEquipped = isSkin && selectedSkin === item.key;
+    const canAfford = isOwned || coins >= item.cost;
+    let btnStyle = canAfford ? "" : "opacity:0.5; filter:grayscale(100%);";
+    if (isEquipped) btnStyle = "opacity:0.6;background:#555;border-color:#444;";
 
-        return `
+    let btnText = 'BUY';
+    if (isEquipped) btnText = 'EQUIPPED';
+    else if (isOwned) btnText = 'EQUIP';
+    else if (!canAfford) btnText = 'LOCKED';
+
+    return `
         <div class="shop-item">
           <div>
             <div style="font-weight:700;color:#ffd660;font-size:16px;display:flex;align-items:center;">
@@ -213,7 +225,7 @@ function renderShop() {
   `;
   ov.style.zIndex = "999";
   ov.style.display = "flex";
-  
+
   // Explicitly hide the start/game-over screen so they don't fight for clicks or z-index
   if (!gameRunning) {
     const mainOverlay = document.getElementById("overlay");
@@ -225,7 +237,7 @@ function closeShop() {
   const ov = document.getElementById("shopModal");
   ov.style.display = "none";
   shopOpen = false;
-  
+
   // Bring back the start/game-over screen
   if (!gameRunning) {
     const mainOverlay = document.getElementById("overlay");

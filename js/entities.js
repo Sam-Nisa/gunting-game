@@ -86,8 +86,8 @@ function createEnemy(ex, type, w) {
 function spawnBoss(w) {
   playSound("boss_roar");
   const level = Math.floor(w / 5);
-  // MODIFIED: Boss HP adjusted by difficulty
-  const baseHp = 80 + level * 40;
+  // MODIFIED: Boss HP adjusted by difficulty. Level 5 = 200, Level 10 = 400.
+  const baseHp = 200 * level;
   const hp = Math.ceil(baseHp * DIFFICULTY_SETTINGS[difficulty].hpMult);
   boss = {
     x: camX + W - 120,

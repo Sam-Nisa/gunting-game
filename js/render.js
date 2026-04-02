@@ -49,7 +49,7 @@ function drawPlayer(p) {
   const isImageSkin = p.skin && p.skin.startsWith("player") && typeof playerImages !== 'undefined' && playerImages[p.skin] && playerImages[p.skin].complete;
 
   if (isImageSkin) {
-    ctx.drawImage(playerImages[p.skin], -p.w/2 - 10, -p.h/2 - 10 + (crouch?8:0), p.w + 20, p.h + 10);
+    ctx.drawImage(playerImages[p.skin], -p.w / 2 - 10, -p.h / 2 - 10 + (crouch ? 8 : 0), p.w + 20, p.h + 10);
   } else {
     // Boots
     ctx.fillStyle = "#4a2a10";
@@ -506,11 +506,11 @@ function update() {
 
   // Camera follow player
   const targetCam = player.x - W / 2 + player.w / 2;
-  camX += (targetCam - camX) * 0.08;
+  camX += (targetCam - camX) * 0.08 * timeScale;
   camX = Math.max(0, Math.min(WORLD_W - W, camX));
 
   // Screen shake
-  screenShake = Math.max(0, screenShake - 1);
+  screenShake = Math.max(0, screenShake - timeScale);
 
   // Player input
   const standH = 40;
@@ -570,13 +570,13 @@ function update() {
   }
   keys._mPrev = keys["m"] || keys["M"];
 
-  player.shootCd = Math.max(0, player.shootCd - 1);
-  player.shootAnim = Math.max(0, player.shootAnim - 1);
-  player.dashCd = Math.max(0, player.dashCd - 1);
-  player.invincible = Math.max(0, player.invincible - 1);
-  player.grenadeCD = Math.max(0, player.grenadeCD - 1);
+  player.shootCd = Math.max(0, player.shootCd - timeScale);
+  player.shootAnim = Math.max(0, player.shootAnim - timeScale);
+  player.dashCd = Math.max(0, player.dashCd - timeScale);
+  player.invincible = Math.max(0, player.invincible - timeScale);
+  player.grenadeCD = Math.max(0, player.grenadeCD - timeScale);
   if (Math.abs(player.vx) > 0.5) {
-    player.frameTimer++;
+    player.frameTimer += timeScale;
     if (player.frameTimer > 5) {
       player.frame++;
       player.frameTimer = 0;
@@ -584,7 +584,7 @@ function update() {
   }
 
   for (const f of muzzleFlashes) {
-    f.life -= 1;
+    f.life -= timeScale;
   }
   muzzleFlashes = muzzleFlashes.filter((f) => f.life > 0);
 
@@ -614,7 +614,7 @@ function update() {
       e.vy = dy > 0 ? 1.5 : -1.5;
       e.y += Math.sin(Date.now() / 400 + e.sinOffset) * 0.8; // hover wobble
 
-      e.shootCd--;
+      e.shootCd -= timeScale;
       if (e.shootCd <= 0 && dist < 420) {
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
         enemyBullets.push({
@@ -628,7 +628,7 @@ function update() {
       }
     } else if (e.weapon === "knife") {
       // Knife enemies close in and only deal melee damage
-      e.meleeCd = Math.max(0, e.meleeCd - 1);
+      e.meleeCd = Math.max(0, e.meleeCd - timeScale);
       if (bossActive) {
         e.vx = 0;
         if (dist < 40 && e.meleeCd <= 0) {
@@ -696,7 +696,7 @@ function update() {
           e.vy = -12;
       }
 
-      e.shootCd--;
+      e.shootCd -= timeScale;
       if (e.shootCd <= 0 && dist < 420) {
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
         const speed = e.type === "heavy" ? 6 : 5;
@@ -710,7 +710,7 @@ function update() {
         e.shootCd = e.type === "heavy" ? 100 : 65;
       }
     }
-    e.frameTimer++;
+    e.frameTimer += timeScale;
     if (e.frameTimer > 6) {
       e.frame++;
       e.frameTimer = 0;
@@ -728,7 +728,7 @@ function update() {
     // Boss stands in place and only shoots, instead of chasing the player.
     boss.vx = 0;
 
-    boss.shootCd--;
+    boss.shootCd -= timeScale;
     const rate = boss.rage ? 25 : 40;
     if (boss.shootCd <= 0) {
       const len = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -748,7 +748,7 @@ function update() {
       }
       boss.shootCd = rate;
     }
-    boss.frameTimer++;
+    boss.frameTimer += timeScale;
     if (boss.frameTimer > 8) {
       boss.frame++;
       boss.frameTimer = 0;
@@ -760,12 +760,12 @@ function update() {
   for (const b of bullets) {
     b.x += b.vx * gameSpeed;
     b.y += b.vy * gameSpeed;
-    b.life--;
+    b.life -= timeScale;
   } // MODIFIED
   for (const b of enemyBullets) {
     b.x += b.vx * gameSpeed;
     b.y += b.vy * gameSpeed;
-    b.life--;
+    b.life -= timeScale;
   } // MODIFIED
 
   // Grenade physics
@@ -794,7 +794,7 @@ function update() {
       g.vx *= 0.7;
       g.bounces--;
     }
-    g.life--;
+    g.life -= timeScale;
     if (g.life <= 0 || g.bounces < 0) {
       // EXPLODE
       g.life = -1;
@@ -997,11 +997,11 @@ function update() {
     p.x += p.vx * gameSpeed;
     p.y += p.vy * gameSpeed;
     p.vy += 0.15 * gameSpeed;
-    p.life -= 0.04;
-    p.size *= 0.97;
+    p.life -= 0.04 * timeScale;
+    p.size *= Math.pow(0.97, timeScale);
   } // MODIFIED
   for (const ex of explosions) {
-    ex.life -= 0.05;
+    ex.life -= 0.05 * timeScale;
   }
 
   // Cleanup
