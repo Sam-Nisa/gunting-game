@@ -561,10 +561,21 @@ function update() {
     player.invincible = Math.max(player.invincible, 15);
   }
   if (keys[" "] || keys["z"] || keys["Z"]) playerShoot();
-  if ((keys["g"] || keys["G"]) && !keys._gPrev) throwGrenade();
-  keys._gPrev = keys["g"] || keys["G"];
+  if ((keys["g"] || keys["G"] || keys["3"]) && !keys._gPrev) throwGrenade();
+  keys._gPrev = keys["g"] || keys["G"] || keys["3"];
   if ((keys["q"] || keys["Q"]) && !keys._qPrev) switchWeapon();
   keys._qPrev = keys["q"] || keys["Q"];
+  
+  if (keys["1"]) {
+    player.weapon = "rifle";
+    updateWeaponUI();
+  }
+  if (keys["2"] && !keys._2Prev) {
+    if (player.weapon === "shotgun") player.weapon = "rocket";
+    else player.weapon = "shotgun";
+    updateWeaponUI();
+  }
+  keys._2Prev = keys["2"];
   if ((keys["m"] || keys["M"]) && !keys._mPrev) {
     toggleSound();
   }
