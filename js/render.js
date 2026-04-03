@@ -502,7 +502,7 @@ function drawPickups() {
 //  UPDATE
 // ═══════════════════════════════════════════════════
 function update() {
-  if (!gameRunning) return;
+  if (!gameRunning || gamePaused) return;
 
   // Camera follow player
   const targetCam = player.x - W / 2 + player.w / 2;
@@ -823,7 +823,7 @@ function update() {
             const coinReward = Math.round(
               (e.type === "heavy" ? 18 : 10) * DIFFICULTY_SETTINGS[difficulty].countMult,
             );
-            coins += coinReward;
+            window.coins += coinReward;
             savePersistentData();
           }
         }
@@ -877,7 +877,7 @@ function update() {
           const coinReward = Math.round(
             (e.type === "heavy" ? 18 : e.type === "drone" ? 14 : 10) * DIFFICULTY_SETTINGS[difficulty].countMult,
           );
-          coins += coinReward;
+          window.coins += coinReward;
           savePersistentData();
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ff2200", 14);
           spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ffcc44", 6);
@@ -901,7 +901,7 @@ function update() {
           kills++;
           score += 200;
           const coinReward = Math.round(10 * DIFFICULTY_SETTINGS[difficulty].countMult);
-          coins += coinReward;
+          window.coins += coinReward;
           savePersistentData();
           spawnParticles(ex2, ey, "#ff2200", 10);
         }
@@ -1051,7 +1051,7 @@ function update() {
   document.getElementById("livesDisplay").textContent = player.lives;
   document.getElementById("scoreDisplay").textContent = score;
   const coinLabel = document.getElementById("coinDisplay");
-  if (coinLabel) coinLabel.textContent = coins;
+  if (coinLabel) coinLabel.textContent = window.coins;
   document.getElementById("waveDisplay").textContent = wave;
   document.getElementById("ammoDisplay").textContent =
     WEAPONS[player.weapon].ammo < 0 ? "∞" : WEAPONS[player.weapon].ammo;
@@ -1061,7 +1061,7 @@ function killBoss() {
   boss.dead = true;
   kills += 10;
   score += 3000 + boss.level * 1000;
-  coins += 75;
+  window.coins += 75;
   savePersistentData();
   spawnExplosion(boss.x + boss.w / 2, boss.y + boss.h / 2, 120);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ff4400", 30, 10);

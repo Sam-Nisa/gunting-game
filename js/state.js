@@ -11,18 +11,15 @@ let score = 0,
   kills = 0,
   wave = 1,
   gameRunning = false,
-  shopOpen = false,
-  coins = Number(localStorage.getItem("mf_coins") || "0");
+  gamePaused = false,
+  shopOpen = false;
+window.coins = 0;
 
-let savedSkin = localStorage.getItem("mf_skin") || "player1";
-if (savedSkin === "default") savedSkin = "player1";
-let selectedSkin = savedSkin;
+window.savedSkin = "player1";
+window.selectedSkin = window.savedSkin;
 
-let savedOwned = JSON.parse(localStorage.getItem("mf_owned_skins") || '["player1"]');
-if (savedOwned.includes("default")) {
-  savedOwned[savedOwned.indexOf("default")] = "player1";
-}
-let ownedSkins = savedOwned;
+window.savedOwned = ["player1"];
+window.ownedSkins = [...window.savedOwned];
 
 const playerImages = {};
 for (let i = 1; i <= 6; i++) {
@@ -30,7 +27,7 @@ for (let i = 1; i <= 6; i++) {
   playerImages[`player${i}`].src = `./img/player${i}.png`;
 }
 let screenShake = 0;
-let highScores = JSON.parse(localStorage.getItem("mf_scores") || "[]");
+window.highScores = [];
 
 // NEW: Global speed modifier. 1.0 is normal speed. 0.5 is slower than current.
 let gameSpeed = 0.4;
@@ -46,7 +43,7 @@ bgImage.onerror = () => (bgImageLoaded = false);
 
 function getBackgroundForWave(w) {
   const index = ((w - 1) % BG_IMAGE_COUNT) + 1;
-  return `../img/image${index}.png`;
+  return `./img/image${index}.png`;
 }
 
 function setBackgroundForWave(w) {
@@ -204,7 +201,7 @@ function resetPlayer() {
     shootAnim: 0,
     weapon: "rifle",
     grenades: 3,
-    skin: selectedSkin || "player1",
+    skin: window.selectedSkin || "player1",
     jumpPressed: false,
     grenadeCD: 0,
     crouching: false,
@@ -226,7 +223,7 @@ function respawnPlayer() {
   player.shootAnim = 0;
   player.weapon = "rifle";
   player.grenades = 3;
-  player.skin = selectedSkin || "player1";
+  player.skin = window.selectedSkin || "player1";
   player.jumpPressed = false;
   player.grenadeCD = 0;
   player.crouching = false;

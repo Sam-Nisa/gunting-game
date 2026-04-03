@@ -1,0 +1,8 @@
+.env
+js/env.js
+node_modules/
+fetch_fb_config.js
+node_modules
+dist/
+# Firebase service account credential — NEVER commit this
+serviceAccountKey.json

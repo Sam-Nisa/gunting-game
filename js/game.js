@@ -1,3 +1,13 @@
+// ─────────────────────────────────────────────────────────────────────────────
+//  SECURITY: HTML escape helper — use for ALL dynamic content injected via
+//  innerHTML to prevent XSS. Never skip this for data from Firestore or user.
+// ─────────────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = String(str);
+    return d.innerHTML;
+}
+
 function draw() {
   ctx.save();
   // Screen shake
@@ -66,25 +76,23 @@ function loop(timestamp) {
 //  HIGH SCORES
 // ═══════════════════════════════════════════════════
 function saveScore(s, k, w) {
-  highScores.push({
+  window.highScores.push({
     score: s,
     kills: k,
     wave: w,
     date: new Date().toLocaleDateString(),
   });
-  highScores.sort((a, b) => b.score - a.score);
-  highScores = highScores.slice(0, 8);
-  localStorage.setItem("mf_scores", JSON.stringify(highScores));
+  window.highScores.sort((a, b) => b.score - a.score);
+  window.highScores = window.highScores.slice(0, 8);
+  if (typeof saveUserDataFirebase === "function") saveUserDataFirebase();
 }
 
 function savePersistentData() {
-  localStorage.setItem("mf_coins", String(coins));
-  localStorage.setItem("mf_skin", selectedSkin);
-  localStorage.setItem("mf_owned_skins", JSON.stringify(ownedSkins));
+  if (typeof saveUserDataFirebase === "function") saveUserDataFirebase();
 }
 
 function setPlayerSkin(key) {
-  selectedSkin = key;
+  window.selectedSkin = key;
   player.skin = key;
   savePersistentData();
   const skinLabel = document.getElementById("skinDisplay");
@@ -93,23 +101,26 @@ function setPlayerSkin(key) {
 
 function updateHudUI() {
   const coinLabel = document.getElementById("coinDisplay");
-  if (coinLabel) coinLabel.textContent = coins;
+  if (coinLabel) coinLabel.textContent = window.coins;
   const skinLabel = document.getElementById("skinDisplay");
-  if (skinLabel) skinLabel.textContent = selectedSkin.toUpperCase();
+  if (skinLabel) skinLabel.textContent = (window.selectedSkin || 'player1').toUpperCase();
 }
 
 function renderLeaderboard() {
   const ul = document.getElementById("lbList");
   if (!ul) return;
-  if (!highScores.length) {
+  if (!window.highScores.length) {
     ul.innerHTML = "<li>— No scores yet —</li>";
     return;
   }
-  ul.innerHTML = highScores
+  // SECURITY: s.score / s.kills / s.wave come from Firestore (user-controlled).
+  // escHtml() prevents XSS via stored script injection in the leaderboard.
+  ul.innerHTML = window.highScores
     .map(
-      (s, i) => `
-    <li>${["🥇", "🥈", "🥉", "4.", "5.", "6.", "7.", "8."][i] || ""} <span style="color:#ffcc00">${s.score}</span> pts — ${s.kills} kills | Level ${s.wave}</li>
-  `,
+      (s, i) =>
+        `<li>${["🥇", "🥈", "🥉", "4.", "5.", "6.", "7.", "8."][i] || ""} ` +
+        `<span style="color:#ffcc00">${escHtml(s.score)}</span> pts — ` +
+        `${escHtml(s.kills)} kills | Level ${escHtml(s.wave)}</li>`,
     )
     .join("");
 }
@@ -142,6 +153,7 @@ function startGame() {
   document.getElementById("grenadeDisplay2").textContent = "3";
   spawnWave(1);
   gameRunning = true;
+  gamePaused = false;
   startMusic();
 }
 
@@ -171,6 +183,35 @@ function endGame() {
   ov.style.display = "flex";
 }
 
+// ═══════════════════════════════════════════════════
+//  PAUSE
+// ═══════════════════════════════════════════════════
+function pauseGame() {
+  if (!gameRunning || gamePaused) return;
+  gamePaused = true;
+  stopMusic();
+  const pauseEl = document.getElementById("pauseOverlay");
+  if (pauseEl) pauseEl.style.display = "flex";
+  const btn = document.getElementById("pauseBtn");
+  if (btn) { btn.textContent = "▶"; btn.classList.add("is-paused"); }
+}
+
+function resumeGame() {
+  if (!gameRunning || !gamePaused) return;
+  gamePaused = false;
+  startMusic();
+  const pauseEl = document.getElementById("pauseOverlay");
+  if (pauseEl) pauseEl.style.display = "none";
+  const btn = document.getElementById("pauseBtn");
+  if (btn) { btn.textContent = "⏸"; btn.classList.remove("is-paused"); }
+}
+
+function togglePause() {
+  if (!gameRunning) return;
+  if (gamePaused) resumeGame();
+  else pauseGame();
+}
+
 const SHOP_ITEMS = [
   { key: "shotgun", title: "SHOTGUN", cost: 80, ammo: 20, type: "weapon" },
   { key: "rocket", title: "ROCKET", cost: 140, ammo: 6, type: "weapon" },
@@ -188,14 +229,14 @@ function renderShop() {
     <h1>🛒 ARMORY</h1>
     <p class="sub">Upgrade your arsenal for the next run.</p>
     <div style="width:100%;text-align:center;margin-bottom:12px;">
-      <span style="background:rgba(255,187,0,0.1);color:#ffcc00;padding:6px 12px;border-radius:12px;border:1px solid rgba(255,187,0,0.3);font-weight:700;">🪙 ${coins} COINS</span>
+      <span style="background:rgba(255,187,0,0.1);color:#ffcc00;padding:6px 12px;border-radius:12px;border:1px solid rgba(255,187,0,0.3);font-weight:700;">🪙 ${window.coins} COINS</span>
     </div>
     <div style="width:100%;display:grid;gap:12px;text-align:left;max-height:200px;overflow-y:auto;padding-right:8px;">
       ${SHOP_ITEMS.map((item, idx) => {
     const isSkin = item.type === "skin";
-    const isOwned = isSkin && ownedSkins.includes(item.key);
-    const isEquipped = isSkin && selectedSkin === item.key;
-    const canAfford = isOwned || coins >= item.cost;
+    const isOwned = isSkin && window.ownedSkins.includes(item.key);
+    const isEquipped = isSkin && window.selectedSkin === item.key;
+    const canAfford = isOwned || window.coins >= item.cost;
     let btnStyle = canAfford ? "" : "opacity:0.5; filter:grayscale(100%);";
     if (isEquipped) btnStyle = "opacity:0.6;background:#555;border-color:#444;";
 
@@ -214,13 +255,13 @@ function renderShop() {
             </div>
             <div style="font-size:13px;color:#aaa;margin-top:4px;">🔑 Cost: <span style="color:${isOwned ? '#44ff44' : (canAfford ? '#ffcc00' : '#ff4444')}">${isOwned ? 'OWNED' : item.cost}</span></div>
           </div>
-          <button class="btn" style="margin-top:0;padding:8px 20px;font-size:13px; ${btnStyle}" onclick="buyWeapon('${item.key}')">
+          <button class="btn" style="margin-top:0;padding:8px 20px;font-size:13px; ${btnStyle}" onclick="buyWeapon('${escHtml(item.key)}')">
             ${btnText}
           </button>
         </div>
       `}).join("")}
     </div>
-    <p style="margin-top:16px;color:#888;font-size:13px;">Current skin: <span style="color:#fff">${selectedSkin.toUpperCase()}</span></p>
+    <p style="margin-top:16px;color:#888;font-size:13px;">Current skin: <span style="color:#fff">${(window.selectedSkin || 'player1').toUpperCase()}</span></p>
     <button class="btn" style="background:transparent;box-shadow:none;border:1px solid rgba(255,255,255,0.2)" onclick="toggleShop()">Close Armory</button>
   `;
   ov.style.zIndex = "999";
@@ -259,16 +300,16 @@ function buyWeapon(key) {
   if (!item) return;
 
   const isSkin = item.type === "skin";
-  const isOwned = isSkin && ownedSkins.includes(key);
+  const isOwned = isSkin && window.ownedSkins.includes(key);
 
   if (!isOwned) {
-    if (coins < item.cost) {
+    if (window.coins < item.cost) {
       alert("NOT ENOUGH COINS! Defeat enemies to earn more.");
       return;
     }
-    coins -= item.cost;
+    window.coins -= item.cost;
     if (isSkin) {
-      ownedSkins.push(key);
+      window.ownedSkins.push(key);
     }
   }
 
@@ -282,7 +323,7 @@ function buyWeapon(key) {
   savePersistentData();
   updateWeaponUI();
   const coinLabel = document.getElementById("coinDisplay");
-  if (coinLabel) coinLabel.textContent = coins;
+  if (coinLabel) coinLabel.textContent = window.coins;
   playSound("pickup");
   renderShop(); // Keep shop open and update the UI (coin balance, locked states)
 }
@@ -291,12 +332,18 @@ function buyWeapon(key) {
 //  INPUT
 // ═══════════════════════════════════════════════════
 document.addEventListener("keydown", (e) => {
-  if (e.key === "b" || e.key === "B") {
-    toggleShop();
+  // Escape or P — pause / resume (works any time the game is running)
+  if ((e.key === "Escape" || e.key === "p" || e.key === "P") && gameRunning) {
+    togglePause();
     e.preventDefault();
     return;
   }
-  keys[e.key] = true;
+  if (e.key === "b" || e.key === "B") {
+    if (!gamePaused) toggleShop();
+    e.preventDefault();
+    return;
+  }
+  if (!gamePaused) keys[e.key] = true;
   e.preventDefault();
 });
 document.addEventListener("keyup", (e) => {

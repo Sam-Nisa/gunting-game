@@ -330,7 +330,7 @@ function updateWeaponUI() {
   document.getElementById("ammoDisplay").textContent =
     wep.ammo < 0 ? "∞" : wep.ammo;
   const skinLabel = document.getElementById("skinDisplay");
-  if (skinLabel) skinLabel.textContent = (player.skin || selectedSkin || "default").toUpperCase();
+  if (skinLabel) skinLabel.textContent = (player.skin || window.selectedSkin || "default").toUpperCase();
 }
 
 // ═══════════════════════════════════════════════════
