@@ -109,6 +109,34 @@ function spawnBoss(w) {
     rage: false,
   };
   spawnBossSupportItems();
+
+}
+
+// Creates an enemy forced to hold a knife (used for boss-level bodyguards).
+function createKnifeEnemy(ex, type, w) {
+  const baseHp = (type === "heavy" ? 7 : 3) + Math.floor(w / 2);
+  const hp = Math.ceil(baseHp * DIFFICULTY_SETTINGS[difficulty].hpMult);
+  return {
+    x: ex,
+    y: 380,
+    vx: 0,
+    vy: 0,
+    w: type === "heavy" ? 34 : 28,
+    h: type === "heavy" ? 44 : 38,
+    hp,
+    maxHp: hp,
+    onGround: false,
+    facing: ex > camX + W / 2 ? -1 : 1,
+    shootCd: 999,  // never shoots
+    meleeCd: 0,
+    patrolDir: 1,
+    type,
+    weapon: "knife",  // ALWAYS knife — visual + AI
+    frame: 0,
+    frameTimer: 0,
+    sinOffset: 0,
+    dead: false,
+  };
 }
 
 function spawnBossSupportItems() {

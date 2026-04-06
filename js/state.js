@@ -205,6 +205,10 @@ function resetPlayer() {
     jumpPressed: false,
     grenadeCD: 0,
     crouching: false,
+    shields: 0,          // number of shield charges stored
+    shieldActive: false, // true while shield is protecting
+    shieldTimer: 0,      // frames remaining on active shield (600 = 10 sec at 60fps)
+    shieldKey: false,    // debounce
   };
 }
 
@@ -228,7 +232,13 @@ function respawnPlayer() {
   player.grenadeCD = 0;
   player.crouching = false;
   player.hp = player.maxHp;
+  // Keep shields on respawn
+  if (!player.shields) player.shields = 0;
+  if (!player.shieldTimer) player.shieldTimer = 0;
+  player.shieldActive = false;
+  player.shieldKey = false;
   updateWeaponUI();
+  if (typeof updateShieldUI === "function") updateShieldUI();
   document.getElementById("grenadeDisplay2").textContent = player.grenades;
 }
 

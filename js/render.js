@@ -109,6 +109,30 @@ function drawPlayer(p) {
     ctx.fillStyle = "#ff6600";
     ctx.fillRect(31 + recoil, gunY - 1, 8, 10);
   }
+  // Shield visual — drawn AFTER the player sprite, before ctx.restore()
+  if (player.shieldActive && player.shieldTimer > 0) {
+    const pulse = 0.8 + Math.sin(Date.now() / 120) * 0.2;
+    const alpha = Math.min(1, player.shieldTimer / 60) * pulse;
+    const radius = 30 + Math.sin(Date.now() / 80) * 3;
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.55;
+    const shieldGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, radius);
+    shieldGrad.addColorStop(0, "rgba(0,220,255,0.85)");
+    shieldGrad.addColorStop(0.6, "rgba(0,140,255,0.35)");
+    shieldGrad.addColorStop(1, "rgba(0,80,200,0)");
+    ctx.fillStyle = shieldGrad;
+    ctx.beginPath();
+    ctx.arc(0, -5, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = `rgba(0,230,255,${alpha * 0.9})`;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#00eeff";
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(0, -5, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
   ctx.restore();
 }
 
@@ -275,15 +299,38 @@ function drawBoss(b) {
   ctx.beginPath();
   ctx.arc(8, -46, 4, 0, Math.PI * 2);
   ctx.fill();
-  // Cannon arm
+  // Giant Knife arm
+  ctx.save();
+  ctx.translate(36, -11);
+  if (b.meleeCd > 15) {
+    ctx.rotate(Math.PI / 4); // swing down
+  } else if (b.meleeCd > 0) {
+    ctx.rotate(-Math.PI / 6); // wind up
+  }
   ctx.fillStyle = "#550000";
-  ctx.fillRect(36, -20, 22, 18);
-  ctx.fillStyle = "#333";
-  ctx.fillRect(54, -18, 20, 14);
-  ctx.fillStyle = "#cc2200";
+  ctx.fillRect(0, -9, 22, 18); // shoulder
+  // Knife handle
+  ctx.fillStyle = "#222";
+  ctx.fillRect(18, -5, 18, 8); 
+  // Crossguard
+  ctx.fillStyle = "#444";
+  ctx.fillRect(30, -17, 8, 30);
+  // Blade 
+  ctx.fillStyle = "#aaa";
   ctx.beginPath();
-  ctx.arc(72, -11, 8, 0, Math.PI * 2);
+  ctx.moveTo(38, -9);
+  ctx.lineTo(94, -9);
+  ctx.lineTo(84, 6);
+  ctx.lineTo(38, 6);
   ctx.fill();
+  ctx.fillStyle = "#eee"; // Blade edge highlight
+  ctx.beginPath();
+  ctx.moveTo(38, -9);
+  ctx.lineTo(94, -9);
+  ctx.lineTo(84, -4);
+  ctx.lineTo(38, -4);
+  ctx.fill();
+  ctx.restore();
   // Shield arm
   ctx.fillStyle = "#440000";
   ctx.fillRect(-56, -22, 22, 28);
@@ -470,18 +517,26 @@ function drawPickups() {
     const bob = Math.sin(Date.now() / 300) * 5;
     ctx.save();
     ctx.translate(pu.x, pu.y - bob);
-    ctx.strokeStyle = "#ffcc00";
+    const isShield = pu.type === "shield";
+    ctx.strokeStyle = isShield ? "#00eeff" : "#ffcc00";
     ctx.lineWidth = 2;
+    if (isShield) {
+      // Glowing cyan border for shield
+      ctx.shadowColor = "#00eeff";
+      ctx.shadowBlur = 10;
+    }
     const cols = {
       health: "#ff3333",
       shotgun: "#aa4400",
       rocket: "#cc2200",
       grenade: "#226600",
       score: "#4488ff",
+      shield: "#004488",
     };
     ctx.fillStyle = cols[pu.type] || "#4488ff";
     ctx.fillRect(-13, -13, 26, 26);
     ctx.strokeRect(-13, -13, 26, 26);
+    ctx.shadowBlur = 0;
     ctx.fillStyle = "#fff";
     ctx.font = "bold 15px Courier New";
     ctx.textAlign = "center";
@@ -491,6 +546,7 @@ function drawPickups() {
       rocket: "🚀",
       grenade: "💣",
       score: "★",
+      shield: "🛡",
     };
     ctx.fillText(icons[pu.type] || "★", 0, 6);
     ctx.restore();
@@ -563,9 +619,10 @@ function update() {
   if (keys[" "] || keys["z"] || keys["Z"]) playerShoot();
   if ((keys["g"] || keys["G"] || keys["3"]) && !keys._gPrev) throwGrenade();
   keys._gPrev = keys["g"] || keys["G"] || keys["3"];
+
   if ((keys["q"] || keys["Q"]) && !keys._qPrev) switchWeapon();
   keys._qPrev = keys["q"] || keys["Q"];
-  
+
   if (keys["1"]) {
     player.weapon = "rifle";
     updateWeaponUI();
@@ -586,6 +643,17 @@ function update() {
   player.dashCd = Math.max(0, player.dashCd - timeScale);
   player.invincible = Math.max(0, player.invincible - timeScale);
   player.grenadeCD = Math.max(0, player.grenadeCD - timeScale);
+
+  // Shield timer tick
+  if (player.shieldActive) {
+    player.shieldTimer = Math.max(0, player.shieldTimer - timeScale);
+    player.invincible = Math.max(player.invincible, 2); // keep invincible every frame
+    if (player.shieldTimer <= 0) {
+      player.shieldActive = false;
+      player.shieldTimer = 0;
+      updateShieldUI();
+    }
+  }
   if (Math.abs(player.vx) > 0.5) {
     player.frameTimer += timeScale;
     if (player.frameTimer > 5) {
@@ -638,12 +706,15 @@ function update() {
         e.shootCd = 50;
       }
     } else if (e.weapon === "knife") {
-      // Knife enemies close in and only deal melee damage
+      // Knife enemies always chase and slash — even during boss waves
       e.meleeCd = Math.max(0, e.meleeCd - timeScale);
-      if (bossActive) {
+      const speed = e.type === "heavy" ? 2.2 : 3.2;
+      if (dist > 36) {
+        e.vx = e.facing * speed;
+      } else {
         e.vx = 0;
-        if (dist < 40 && e.meleeCd <= 0) {
-          e.meleeCd = 40;
+        if (e.meleeCd <= 0) {
+          e.meleeCd = 36;
           if (player.invincible <= 0) {
             player.hp -= 10 * DIFFICULTY_SETTINGS[difficulty].damageMult;
             player.invincible = 35;
@@ -657,16 +728,24 @@ function update() {
             playSound("hurt");
           }
         }
-      } else {
-        const speed = e.type === "heavy" ? 1.8 : 2.4;
-        if (dist > 40) {
+      }
+      // Jump to follow player onto platforms
+      if (player.y < e.y - 40 && e.onGround && Math.random() < 0.03) e.vy = -13;
+    } else {
+      if (bossActive) {
+        // During boss wave: gun enemies DROP their guns and rush the player with melee
+        e.weapon = "knife"; // Equip knife visually
+        e.meleeCd = Math.max(0, (e.meleeCd || 0) - timeScale);
+        const speed = e.type === "heavy" ? 2.0 : 3.0;
+        e.facing = dx > 0 ? 1 : -1;
+        if (dist > 36) {
           e.vx = e.facing * speed;
         } else {
           e.vx = 0;
           if (e.meleeCd <= 0) {
-            e.meleeCd = 40;
+            e.meleeCd = 36;
             if (player.invincible <= 0) {
-              player.hp -= 10 * DIFFICULTY_SETTINGS[difficulty].damageMult;
+              player.hp -= 12 * DIFFICULTY_SETTINGS[difficulty].damageMult;
               player.invincible = 35;
               spawnParticles(
                 player.x + player.w / 2,
@@ -674,20 +753,13 @@ function update() {
                 "#ff4444",
                 10,
               );
-              screenShake = 5;
+              screenShake = 6;
               playSound("hurt");
             }
           }
         }
-      }
-      if (player.y < e.y - 60 && e.onGround && Math.random() < 0.02) e.vy = -12;
-    } else {
-      if (bossActive) {
-        // On boss level, gun enemies stand still and shoot
-        e.vx = 0;
-        e.facing = dx > 0 ? 1 : -1;
-        if (player.y < e.y - 60 && e.onGround && Math.random() < 0.02)
-          e.vy = -12;
+        // Jump to chase player on platforms
+        if (player.y < e.y - 40 && e.onGround && Math.random() < 0.03) e.vy = -13;
       } else {
         // Gun enemies keep range and shoot from afar
         const speed = e.type === "heavy" ? 1.5 : 2.2;
@@ -707,18 +779,21 @@ function update() {
           e.vy = -12;
       }
 
-      e.shootCd -= timeScale;
-      if (e.shootCd <= 0 && dist < 420) {
-        const len = Math.sqrt(dx * dx + dy * dy) || 1;
-        const speed = e.type === "heavy" ? 6 : 5;
-        enemyBullets.push({
-          x: e.x + e.w / 2,
-          y: e.y + e.h * 0.3,
-          vx: (dx / len) * speed,
-          vy: (dy / len) * speed,
-          life: 80,
-        });
-        e.shootCd = e.type === "heavy" ? 100 : 65;
+      // Only shoot bullets on normal waves — boss waves = melee rush only
+      if (!bossActive) {
+        e.shootCd -= timeScale;
+        if (e.shootCd <= 0 && dist < 420) {
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          const speed = e.type === "heavy" ? 6 : 5;
+          enemyBullets.push({
+            x: e.x + e.w / 2,
+            y: e.y + e.h * 0.3,
+            vx: (dx / len) * speed,
+            vy: (dy / len) * speed,
+            life: 80,
+          });
+          e.shootCd = e.type === "heavy" ? 100 : 65;
+        }
       }
     }
     e.frameTimer += timeScale;
@@ -733,34 +808,39 @@ function update() {
   if (boss && !boss.dead) {
     const dx = player.x - boss.x,
       dy = player.y - boss.y;
+    const dist = Math.abs(dx);
     boss.facing = dx > 0 ? 1 : -1;
     boss.rage = boss.hp < boss.maxHp * 0.4;
 
-    // Boss stands in place and only shoots, instead of chasing the player.
-    boss.vx = 0;
+    // Boss chases the player with melee
+    boss.meleeCd = Math.max(0, (boss.meleeCd || 0) - timeScale);
+    const speed = boss.rage ? 2.5 : 1.5;
 
-    boss.shootCd -= timeScale;
-    const rate = boss.rage ? 25 : 40;
-    if (boss.shootCd <= 0) {
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      // Spread shots when raging
-      const shots = boss.rage ? 3 : 1;
-      for (let i = 0; i < shots; i++) {
-        const spread = (i - (shots - 1) / 2) * 0.2;
-        const ang = Math.atan2(dy, dx) + spread;
-        enemyBullets.push({
-          x: boss.x + boss.w / 2,
-          y: boss.y + boss.h * 0.3,
-          vx: Math.cos(ang) * 8,
-          vy: Math.sin(ang) * 8,
-          life: 90,
-          boss: true,
-        });
+    if (dist > 55) {
+      boss.vx = boss.facing * speed;
+    } else {
+      boss.vx = 0;
+      if (boss.meleeCd <= 0) {
+        boss.meleeCd = 40;
+        if (player.invincible <= 0) {
+          player.hp -= 20 * DIFFICULTY_SETTINGS[difficulty].damageMult;
+          player.invincible = 35;
+          spawnParticles(player.x + player.w / 2, player.y + player.h / 2, "#ff4444", 15);
+          screenShake = 10;
+          playSound("hurt");
+        }
       }
-      boss.shootCd = rate;
     }
+
+    // Jump to chase player onto platforms
+    if (player.y < boss.y - 40 && boss.onGround && Math.random() < 0.05) {
+      boss.vy = -14;
+    }
+
     boss.frameTimer += timeScale;
-    if (boss.frameTimer > 8) {
+    // Walk animation speed increases when raging
+    const animSpeed = boss.rage ? 5 : 8;
+    if (boss.frameTimer > animSpeed) {
       boss.frame++;
       boss.frameTimer = 0;
     }
@@ -994,6 +1074,14 @@ function update() {
         player.weapon = "rocket";
       } else if (pu.type === "grenade") {
         player.grenades = Math.min(player.grenades + 2, 9);
+      } else if (pu.type === "shield") {
+        // Auto-activate: picking up shield instantly gives 30s protection.
+        // If shield is already running, extend by 30s.
+        const addTime = 1800; // 30 seconds at ~60fps
+        player.shieldTimer = Math.min((player.shieldTimer || 0) + addTime, 5400);
+        player.shieldActive = true;
+        spawnParticles(pu.x, pu.y, "#00eeff", 18, 6);
+        updateShieldUI();
       } else {
         score += 300;
       }
@@ -1060,6 +1148,7 @@ function update() {
   document.getElementById("waveDisplay").textContent = wave;
   document.getElementById("ammoDisplay").textContent =
     WEAPONS[player.weapon].ammo < 0 ? "∞" : WEAPONS[player.weapon].ammo;
+  updateShieldUI();
 }
 function killBoss() {
   if (!boss || boss.dead) return;
@@ -1072,6 +1161,15 @@ function killBoss() {
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ff4400", 30, 10);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ffcc44", 20, 8);
   for (let i = 0; i < 4; i++) dropPickup(boss.x + i * 20, boss.y);
+
+  // Kill all remaining knife bodyguards so the level ends immediately
+  for (const e of enemies) {
+    if (!e.dead) {
+      e.dead = true;
+      spawnParticles(e.x + e.w / 2, e.y + e.h / 2, "#ff4400", 6, 4);
+    }
+  }
+
   window.levelTransitioning = true;
   window.waveTransitionTimeout = setTimeout(() => {
     window.levelTransitioning = false;
@@ -1083,16 +1181,13 @@ function killBoss() {
 }
 
 function dropPickup(x, y) {
-  const types = ["health", "shotgun", "rocket", "grenade", "score"];
-  const w = [0.35, 0.2, 0.15, 0.15, 0.15];
-  let r = Math.random(),
-    t = 0;
+  // Shield has a ~15% chance; other items share the rest
+  const types = ["health", "shotgun", "rocket", "grenade", "score", "shield"];
+  const w     = [0.30,    0.17,     0.13,    0.13,     0.12,    0.15];
+  let r = Math.random(), t = 0;
   for (let i = 0; i < types.length; i++) {
     r -= w[i];
-    if (r <= 0) {
-      t = i;
-      break;
-    }
+    if (r <= 0) { t = i; break; }
   }
   pickups.push({ x, y, type: types[t] });
 }
@@ -1102,6 +1197,21 @@ function switchWeapon() {
   const idx = ws.indexOf(player.weapon);
   player.weapon = ws[(idx + 1) % ws.length];
   updateWeaponUI();
+}
+
+function updateShieldUI() {
+  const wrap    = document.getElementById("shieldDisplay");
+  const activeEl = document.getElementById("shieldActiveLabel");
+  if (!activeEl) return;
+  if (player.shieldActive && player.shieldTimer > 0) {
+    const secs = Math.ceil(player.shieldTimer / 60);
+    activeEl.style.display = "inline";
+    activeEl.textContent = `${secs}s`;
+    if (wrap) wrap.classList.add("shield-on");
+  } else {
+    activeEl.style.display = "none";
+    if (wrap) wrap.classList.remove("shield-on");
+  }
 }
 
 // ═══════════════════════════════════════════════════

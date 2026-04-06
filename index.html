@@ -36,6 +36,7 @@
                 | AMO:<span id="ammoDisplay" class="mono">∞</span>
             </div>
             <div id="grenadeDisplay">💣 <span id="grenadeDisplay2" class="mono">3</span></div>
+            <div id="shieldDisplay" style="display:flex;align-items:center;gap:4px;">🛡️ <span id="shieldActiveLabel" style="display:none;color:#00eeff;font-size:13px;font-weight:700;text-shadow:0 0 8px #00eeff;letter-spacing:1px;animation:shieldPulse 0.5s ease-in-out infinite alternate;"></span></div>
             <div>💀 <span id="killsDisplay">0</span></div>
             <div>🧡 <span id="livesDisplay">3</span></div>
             <div>⭐ <span id="scoreDisplay">0</span></div>
@@ -45,7 +46,8 @@
             <div class="rightControls">
                 <div class="waveBadge">Level🌊 <span id="waveDisplay" class="mono">1</span></div>
                 <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop">🛒
-                    <span>SHOP</span></div>
+                    <span>SHOP</span>
+                </div>
                 <div id="pauseBtn" class="topActionBtn" onclick="togglePause()" title="Pause (Esc / P)">⏸</div>
                 <div id="inGameSoundToggle" class="topActionBtn soundToggle" onclick="toggleSound()">🔊</div>
             </div>
@@ -57,6 +59,7 @@
             <span class="controlChip"><strong>SPACE</strong> Shoot</span>
             <span class="controlChip"><strong>SHIFT</strong> Dash</span>
             <span class="controlChip"><strong>3/G</strong> Grenade</span>
+            <span class="controlChip"><strong>🛡️</strong> Walk over to shield</span>
             <span class="controlChip"><strong>1,2,Q</strong> Weapon</span>
             <span class="controlChip"><strong>M</strong> Sound</span>
         </div>
@@ -92,7 +95,8 @@
                     <div class="pause-ctrl-row"><kbd>ESC</kbd> or <kbd>P</kbd> — Pause / Resume</div>
                     <div class="pause-ctrl-row"><kbd>A / D</kbd> — Move &nbsp;|&nbsp; <kbd>W / ↑</kbd> — Jump</div>
                     <div class="pause-ctrl-row"><kbd>SPACE</kbd> — Shoot &nbsp;|&nbsp; <kbd>SHIFT</kbd> — Dash</div>
-                    <div class="pause-ctrl-row"><kbd>1 / 2 / Q</kbd> — Switch Weapon &nbsp;|&nbsp; <kbd>3 / G</kbd> — Grenade</div>
+                    <div class="pause-ctrl-row"><kbd>1 / 2 / Q</kbd> — Switch Weapon &nbsp;|&nbsp; <kbd>3 / G</kbd> —
+                        Grenade</div>
                     <div class="pause-ctrl-row"><kbd>B</kbd> — Shop &nbsp;|&nbsp; <kbd>M</kbd> — Sound</div>
                 </div>
             </div>
