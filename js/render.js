@@ -1036,10 +1036,15 @@ function update() {
   );
 
   // Level complete?
-  if (enemies.length === 0 && !boss) {
-    wave++;
-    score += 500 + wave * 100;
-    spawnWave(wave);
+  if (enemies.length === 0 && !boss && !window.levelTransitioning) {
+    window.levelTransitioning = true;
+    window.waveTransitionTimeout = setTimeout(() => {
+      window.levelTransitioning = false;
+      if (!gameRunning) return;
+      wave++;
+      score += 500 + wave * 100;
+      spawnWave(wave);
+    }, 5000);
   }
 
   // Update UI
@@ -1067,11 +1072,14 @@ function killBoss() {
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ff4400", 30, 10);
   spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, "#ffcc44", 20, 8);
   for (let i = 0; i < 4; i++) dropPickup(boss.x + i * 20, boss.y);
-  setTimeout(() => {
+  window.levelTransitioning = true;
+  window.waveTransitionTimeout = setTimeout(() => {
+    window.levelTransitioning = false;
+    if (!gameRunning) return;
     boss = null;
     wave++;
     spawnWave(wave);
-  }, 2000);
+  }, 5000);
 }
 
 function dropPickup(x, y) {

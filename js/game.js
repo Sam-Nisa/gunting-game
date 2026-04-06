@@ -134,6 +134,8 @@ function startGame() {
   score = 0;
   kills = 0;
   wave = 1;
+  if (window.waveTransitionTimeout) clearTimeout(window.waveTransitionTimeout);
+  window.levelTransitioning = false;
   bullets = [];
   enemyBullets = [];
   enemies = [];
