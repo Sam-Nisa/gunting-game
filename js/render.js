@@ -1146,6 +1146,8 @@ function update() {
   const coinLabel = document.getElementById("coinDisplay");
   if (coinLabel) coinLabel.textContent = window.coins;
   document.getElementById("waveDisplay").textContent = wave;
+  const bgNameEl = document.getElementById("bgNameDisplay");
+  if (bgNameEl) bgNameEl.textContent = getBackgroundNameForWave(wave);
   document.getElementById("ammoDisplay").textContent =
     WEAPONS[player.weapon].ammo < 0 ? "∞" : WEAPONS[player.weapon].ammo;
   updateShieldUI();

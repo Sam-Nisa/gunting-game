@@ -35,11 +35,29 @@ window.baseGameSpeed = 0.4;
 window.timeScale = 1;
 
 // Background image support
-const BG_IMAGE_COUNT = 5;
+const BG_IMAGE_COUNT = 10;
 const bgImage = new Image();
 let bgImageLoaded = false;
 bgImage.onload = () => (bgImageLoaded = true);
 bgImage.onerror = () => (bgImageLoaded = false);
+
+const BG_NAMES = [
+  "Angkor Wat temple",
+  "Bayon temple",
+  "Baphuon Temple",
+  "Beng Mealea",
+  "Neak Poan Temple",
+  "Song Saa Island",
+  "Koh Rong Samloem",
+  "Koh Rong",
+  "Kampong Chhnang sunset",
+  "Kampot sunset"
+];
+
+function getBackgroundNameForWave(w) {
+  const index = ((w - 1) % BG_IMAGE_COUNT);
+  return BG_NAMES[index];
+}
 
 function getBackgroundForWave(w) {
   const index = ((w - 1) % BG_IMAGE_COUNT) + 1;

@@ -15,9 +15,11 @@ let boss = null;
 // ═══════════════════════════════════════════════════
 function announceWave(w) {
   const el = document.getElementById("waveAnnounce");
-  el.textContent = w % 5 === 0 ? `⚠️ BOSS LEVEL ${w}!` : `⚡ LEVEL ${w}`;
+  const prefix = w % 5 === 0 ? `⚠️ BOSS LEVEL ${w}!` : `⚡ LEVEL ${w}`;
+  const bgName = getBackgroundNameForWave(w);
+  el.innerHTML = `${prefix}<br><span style="font-size: 0.6em; color: #ffcc00; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">📍 ${bgName}</span>`;
   el.style.opacity = "1";
-  setTimeout(() => (el.style.opacity = "0"), 2000);
+  setTimeout(() => (el.style.opacity = "0"), 3000);
 }
 
 function spawnWave(w) {
@@ -371,6 +373,9 @@ function worldToScreen(wx, wy) {
 function drawBackground() {
   if (bgImageLoaded) {
     ctx.drawImage(bgImage, 0, 0, W, H);
+    // Dark overlay on top of the background image
+    ctx.fillStyle = "rgba(0, 0, 0, 0.65)"; // Darken the image
+    ctx.fillRect(0, 0, W, H);
     return;
   }
 
