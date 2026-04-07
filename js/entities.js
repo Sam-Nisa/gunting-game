@@ -371,10 +371,40 @@ function worldToScreen(wx, wy) {
 }
 
 function drawBackground() {
+  if (bgTransitionAlpha < 1.0 && bgImageLoaded) {
+    bgTransitionAlpha += 0.015 * (typeof timeScale !== 'undefined' ? timeScale : 1);
+    if (bgTransitionAlpha >= 1.0) {
+      bgTransitionAlpha = 1.0;
+      prevBgImageLoaded = false;
+    }
+  }
+
+  const drawImg = (img) => {
+    ctx.drawImage(img, 0, 0, W, H);
+  };
+
+  let drewPrev = false;
+  if (prevBgImageLoaded) {
+    drawImg(prevBgImage);
+    drewPrev = true;
+  }
+
   if (bgImageLoaded) {
-    ctx.drawImage(bgImage, 0, 0, W, H);
-    // Dark overlay on top of the background image
-    ctx.fillStyle = "rgba(0, 0, 0, 0.65)"; // Darken the image
+    if (drewPrev && bgTransitionAlpha < 1.0) {
+      ctx.save();
+      ctx.globalAlpha = bgTransitionAlpha;
+      drawImg(bgImage);
+      ctx.restore();
+    } else {
+      drawImg(bgImage);
+    }
+    ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+    ctx.fillRect(0, 0, W, H);
+    return;
+  }
+
+  if (drewPrev) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
     ctx.fillRect(0, 0, W, H);
     return;
   }

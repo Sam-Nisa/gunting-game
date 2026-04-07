@@ -36,10 +36,18 @@ window.timeScale = 1;
 
 // Background image support
 const BG_IMAGE_COUNT = 10;
-const bgImage = new Image();
+let bgImage = new Image();
+let prevBgImage = new Image();
 let bgImageLoaded = false;
-bgImage.onload = () => (bgImageLoaded = true);
-bgImage.onerror = () => (bgImageLoaded = false);
+let prevBgImageLoaded = false;
+let bgTransitionAlpha = 1.0;
+
+function setupImage(img, isMain) {
+  img.onload = () => { if (isMain) bgImageLoaded = true; else prevBgImageLoaded = true; };
+  img.onerror = () => { if (isMain) bgImageLoaded = false; else prevBgImageLoaded = false; };
+}
+setupImage(bgImage, true);
+setupImage(prevBgImage, false);
 
 const BG_NAMES = [
   "Angkor Wat temple",
@@ -65,11 +73,29 @@ function getBackgroundForWave(w) {
 }
 
 function setBackgroundForWave(w) {
+  const nextSrc = getBackgroundForWave(w);
+  if (bgImage.src && bgImage.src.endsWith(nextSrc.replace('./', ''))) return;
+
+  if (bgImageLoaded) {
+    let tempImg = prevBgImage;
+    prevBgImage = bgImage;
+    bgImage = tempImg;
+    
+    prevBgImageLoaded = bgImageLoaded;
+    bgImageLoaded = false;
+    
+    setupImage(bgImage, true);
+    setupImage(prevBgImage, false);
+    
+    bgTransitionAlpha = 0.0;
+  }
+  
   bgImageLoaded = false;
-  bgImage.src = getBackgroundForWave(w);
+  bgImage.src = nextSrc;
 }
 
 setBackgroundForWave(1);
+bgTransitionAlpha = 1.0;
 
 // WORLD SIZE (wider for scrolling)
 const WORLD_W = 2400;
