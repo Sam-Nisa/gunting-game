@@ -311,7 +311,7 @@ function drawBoss(b) {
   ctx.fillRect(0, -9, 22, 18); // shoulder
   // Knife handle
   ctx.fillStyle = "#222";
-  ctx.fillRect(18, -5, 18, 8); 
+  ctx.fillRect(18, -5, 18, 8);
   // Crossguard
   ctx.fillStyle = "#444";
   ctx.fillRect(30, -17, 8, 30);
@@ -1075,10 +1075,10 @@ function update() {
       } else if (pu.type === "grenade") {
         player.grenades = Math.min(player.grenades + 2, 9);
       } else if (pu.type === "shield") {
-        // Auto-activate: picking up shield instantly gives 30s protection.
-        // If shield is already running, extend by 30s.
-        const addTime = 1800; // 30 seconds at ~60fps
-        player.shieldTimer = Math.min((player.shieldTimer || 0) + addTime, 5400);
+        // Auto-activate: picking up shield instantly gives 20s protection.
+        // If shield is already running, extend by 20s.
+        const addTime = 1200; // 20 seconds at ~60fps
+        player.shieldTimer = Math.min((player.shieldTimer || 0) + addTime, 3600);
         player.shieldActive = true;
         spawnParticles(pu.x, pu.y, "#00eeff", 18, 6);
         updateShieldUI();
@@ -1185,7 +1185,7 @@ function killBoss() {
 function dropPickup(x, y) {
   // Shield has a ~15% chance; other items share the rest
   const types = ["health", "shotgun", "rocket", "grenade", "score", "shield"];
-  const w     = [0.30,    0.17,     0.13,    0.13,     0.12,    0.15];
+  const w = [0.30, 0.17, 0.13, 0.13, 0.12, 0.15];
   let r = Math.random(), t = 0;
   for (let i = 0; i < types.length; i++) {
     r -= w[i];
@@ -1202,7 +1202,7 @@ function switchWeapon() {
 }
 
 function updateShieldUI() {
-  const wrap    = document.getElementById("shieldDisplay");
+  const wrap = document.getElementById("shieldDisplay");
   const activeEl = document.getElementById("shieldActiveLabel");
   if (!activeEl) return;
   if (player.shieldActive && player.shieldTimer > 0) {
