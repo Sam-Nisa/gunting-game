@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- Content Security Policy: restrict script/style/connect sources -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
@@ -36,7 +37,9 @@
                 | AMO:<span id="ammoDisplay" class="mono">∞</span>
             </div>
             <div id="grenadeDisplay">💣 <span id="grenadeDisplay2" class="mono">3</span></div>
-            <div id="shieldDisplay" style="display:flex;align-items:center;gap:4px;">🛡️ <span id="shieldActiveLabel" style="display:none;color:#00eeff;font-size:13px;font-weight:700;text-shadow:0 0 8px #00eeff;letter-spacing:1px;animation:shieldPulse 0.5s ease-in-out infinite alternate;"></span></div>
+            <div id="shieldDisplay" style="display:flex;align-items:center;gap:4px;">🛡️ <span id="shieldActiveLabel"
+                    style="display:none;color:#00eeff;font-size:13px;font-weight:700;text-shadow:0 0 8px #00eeff;letter-spacing:1px;animation:shieldPulse 0.5s ease-in-out infinite alternate;"></span>
+            </div>
             <div>💀 <span id="killsDisplay">0</span></div>
             <div>🧡 <span id="livesDisplay">3</span></div>
             <div>⭐ <span id="scoreDisplay">0</span></div>
@@ -68,8 +71,11 @@
         </div>
         <div id="mobileControls">
             <div class="mc-joystick">
-                <button id="btnLeft" class="mc-btn" data-key="ArrowLeft">←</button>
-                <button id="btnRight" class="mc-btn" data-key="ArrowRight">→</button>
+                <button id="btnJump" class="mc-btn" data-key="ArrowUp">↑</button>
+                <div class="mc-lr">
+                    <button id="btnLeft" class="mc-btn" data-key="ArrowLeft">←</button>
+                    <button id="btnRight" class="mc-btn" data-key="ArrowRight">→</button>
+                </div>
             </div>
             <div class="mc-actions">
                 <div class="mc-row">
@@ -78,7 +84,6 @@
                     <button id="btnGrenade" class="mc-btn mc-btn-small" data-key="g">💣</button>
                 </div>
                 <div class="mc-row">
-                    <button id="btnJump" class="mc-btn" data-key="ArrowUp">↑</button>
                     <button id="btnShoot" class="mc-btn mc-btn-large" data-key=" ">🔥</button>
                 </div>
             </div>
