@@ -376,6 +376,35 @@ canvas.addEventListener("contextmenu", (e) => {
   if (gameRunning) throwGrenade();
 });
 
+// ═══════════════════════════════════════════════════
+//  MOBILE CONTROLS WIRE-UP
+// ═══════════════════════════════════════════════════
+document.querySelectorAll(".mc-btn").forEach(btn => {
+  const pressBtn = (e) => {
+    e.preventDefault(); // Prevent scrolling / double tap zoom
+    btn.classList.add("active");
+    const key = btn.getAttribute("data-key");
+    if (key) keys[key] = true;
+  };
+  const releaseBtn = (e) => {
+    e.preventDefault();
+    btn.classList.remove("active");
+    const key = btn.getAttribute("data-key");
+    if (key) keys[key] = false;
+  };
+
+  btn.addEventListener("touchstart", pressBtn, { passive: false });
+  btn.addEventListener("touchend", releaseBtn, { passive: false });
+  btn.addEventListener("touchcancel", releaseBtn, { passive: false });
+
+  btn.addEventListener("mousedown", pressBtn);
+  btn.addEventListener("mouseup", releaseBtn);
+  btn.addEventListener("mouseleave", (e) => {
+    if (btn.classList.contains("active")) releaseBtn(e);
+  });
+});
+
+
 renderLeaderboard();
 // NEW: Initialize UI state on load
 setDifficulty("normal");

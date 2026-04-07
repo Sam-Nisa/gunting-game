@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- Content Security Policy: restrict script/style/connect sources -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
@@ -65,6 +65,23 @@
             <span class="controlChip"><strong>🛡️</strong> Walk over to shield</span>
             <span class="controlChip"><strong>1,2,Q</strong> Weapon</span>
             <span class="controlChip"><strong>M</strong> Sound</span>
+        </div>
+        <div id="mobileControls">
+            <div class="mc-joystick">
+                <button id="btnLeft" class="mc-btn" data-key="ArrowLeft">←</button>
+                <button id="btnRight" class="mc-btn" data-key="ArrowRight">→</button>
+            </div>
+            <div class="mc-actions">
+                <div class="mc-row">
+                    <button id="btnWeap" class="mc-btn mc-btn-small" data-key="q">🔫</button>
+                    <button id="btnDash" class="mc-btn mc-btn-small" data-key="Shift">Dash</button>
+                    <button id="btnGrenade" class="mc-btn mc-btn-small" data-key="g">💣</button>
+                </div>
+                <div class="mc-row">
+                    <button id="btnJump" class="mc-btn" data-key="ArrowUp">↑</button>
+                    <button id="btnShoot" class="mc-btn mc-btn-large" data-key=" ">🔥</button>
+                </div>
+            </div>
         </div>
         <div id="overlay">
             <h1 class="glitch" data-text="⚡ METAL FURY">⚡ METAL FURY</h1>

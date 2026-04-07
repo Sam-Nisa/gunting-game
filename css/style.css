@@ -562,3 +562,83 @@
             background: rgba(0, 160, 255, 0.12) !important;
             box-shadow: 0 0 12px rgba(0, 200, 255, 0.25) !important;
         }
+
+        /* ─── MOBILE CONTROLS ───────────────────────────── */
+        #mobileControls {
+            display: none;
+            width: 100%;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 10px 20px;
+            background: rgba(4, 4, 8, 0.9);
+            border-top: 1px solid rgba(255, 68, 0, 0.2);
+            touch-action: none; /* Prevent browser handling gestures */
+        }
+        
+        .mc-joystick, .mc-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .mc-joystick {
+            flex-direction: row;
+        }
+
+        .mc-actions {
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .mc-row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .mc-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mc-btn:active, .mc-btn.active {
+            background: rgba(255, 100, 0, 0.4);
+            border-color: rgba(255, 100, 0, 0.6);
+            transform: scale(0.95);
+        }
+
+        .mc-btn-small {
+            width: 44px;
+            height: 44px;
+            font-size: 16px;
+        }
+
+        .mc-btn-large {
+            width: 64px;
+            height: 64px;
+            font-size: 28px;
+            background: rgba(255, 80, 0, 0.2);
+            border-color: rgba(255, 80, 0, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            #controls { display: none; }
+            #mobileControls { display: flex; }
+            #gameWrap { border-radius: 0; max-width: 100%; border: none; }
+            canvas { border-radius: 0; }
+            .btn { font-size: 14px; padding: 12px 20px; }
+        }
