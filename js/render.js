@@ -726,6 +726,16 @@ function update() {
             );
             screenShake = 5;
             playSound("hurt");
+            if (player.hp <= 0) {
+              player.lives = Math.max(0, player.lives - 1);
+              if (player.lives > 0) {
+                player.hp = player.maxHp;
+                respawnPlayer();
+                return;
+              }
+              endGame();
+              return;
+            }
           }
         }
       }
@@ -755,6 +765,16 @@ function update() {
               );
               screenShake = 6;
               playSound("hurt");
+              if (player.hp <= 0) {
+                player.lives = Math.max(0, player.lives - 1);
+                if (player.lives > 0) {
+                  player.hp = player.maxHp;
+                  respawnPlayer();
+                  return;
+                }
+                endGame();
+                return;
+              }
             }
           }
         }
@@ -828,6 +848,16 @@ function update() {
           spawnParticles(player.x + player.w / 2, player.y + player.h / 2, "#ff4444", 15);
           screenShake = 10;
           playSound("hurt");
+          if (player.hp <= 0) {
+            player.lives = Math.max(0, player.lives - 1);
+            if (player.lives > 0) {
+              player.hp = player.maxHp;
+              respawnPlayer();
+              return;
+            }
+            endGame();
+            return;
+          }
         }
       }
     }
