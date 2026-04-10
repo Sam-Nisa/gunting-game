@@ -574,25 +574,42 @@
     </section>
 
     <!-- Slide 2 -->
-    <section id="slide2" class="slide">
+      <section id="slide8" class="slide">
         <div class="container">
-            <h2>What is This Game?</h2>
-            <ul>
-                <li>Fast-paced survival shooting game.</li>
-                <li>Fight endless waves of enemies.</li>
-                <li>Playable on PC and Mobile.</li>
-            </ul>
+            <h2>Challenges & Solutions</h2>
+            <div class="cards-grid">
+                <div class="card" style="border-left: 4px solid var(--accent);">
+                    <h4 class="neon-text-red">Challenges Faced</h4>
+                    <ul>
+                        <li>Game development is new to me.</li>
+                        <li>No idea how to start the project initially.</li>
+                        <li>Not familiar with game tools and environments.</li>
+                        <li>Difficult to build game logic (enemy, shooting, scoring).</li>
+                        <li>Hard to make the game work on mobile devices.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--secondary);">
+                    <h4 style="color: var(--secondary);">Solutions Implemented</h4>
+                    <ul>
+                        <li>Learned basic game concepts and explored simple games.</li>
+                        <li>Used AI tools (Claude) to get ideas and guidance.</li>
+                        <li>Chose Metal Fury Gunting as the project topic.</li>
+                        <li>Built the game step by step and tested often.</li>
+                        <li>Used Antigravity IDE to develop faster.</li>
+                        <li>Improved UI and controls for mobile support.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
-
-    <!-- Slide 3 (MOST IMPORTANT FIRST CONTENT) -->
+    
     <!-- Slide 3 -->
     <section id="slide3" class="slide">
         <div class="container">
             <h2 style="text-align:center;">Core Gameplay</h2>
             <p class="sub-headline"
                 style="text-align: center; max-width: 800px; margin: 0 auto; color: var(--text-muted);">Every match
-                follows a tight, addictive loop designed to keep players engaged and always pushing for the next level.
+                Each level is short and fun, making players want to keep playing and reach the next level.
             </p>
             <div class="pinwheel-container"> <!-- SVG Pinwheel center --> <svg width="200" height="200"
                     viewBox="0 0 200 200" class="pinwheel-svg">
@@ -649,10 +666,6 @@
                     </div>
                 </div>
             </div>
-            <p class="sub-headline"
-                style="text-align: center; max-width: 850px; margin: 0.5rem auto 0 auto; color: var(--text-main); font-size: 1.1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
-                The loop is self-reinforcing: better upgrades fuel deeper survival runs, which unlock greater earning
-                potential — driving players back in every session.</p>
         </div>
     </section>
 
@@ -662,7 +675,6 @@
             <h2>Game Engine</h2>
             <ul>
                 <li>60 FPS smooth gameplay using requestAnimationFrame.</li>
-                <li>Custom physics and collision system.</li>
                 <li>Difficulty increases automatically.</li>
             </ul>
         </div>
@@ -698,36 +710,24 @@
             <h2>Backend (Firebase)</h2>
             <ul>
                 <li>Anonymous login system.</li>
-                <li>Save scores and coins online.</li>
-                <li>Global leaderboard system.</li>
+                <li>Save coins, Characters, scores on Firebase and their personal Top 8 High Scores — synced across every
+                    device and session.</li>
             </ul>
         </div>
     </section>
 
     <!-- Slide 8 -->
-    <section id="slide8" class="slide">
+   <section id="slide2" class="slide">
         <div class="container">
-            <h2>Challenges & Solutions</h2>
-            <div class="cards-grid">
-                <div class="card" style="border-left: 4px solid var(--accent);">
-                    <h4 class="neon-text-red">Challenges Faced</h4>
-                    <ul>
-                        <li>Building physics from scratch.</li>
-                        <li>Keeping smooth performance.</li>
-                        <li>Balancing difficulty.</li>
-                    </ul>
-                </div>
-                <div class="card" style="border-left: 4px solid var(--secondary);">
-                    <h4 style="color: var(--secondary);">Solutions Implemented</h4>
-                    <ul>
-                        <li>Optimized collision logic.</li>
-                        <li>Efficient rendering system.</li>
-                        <li>Auto scaling difficulty.</li>
-                    </ul>
-                </div>
-            </div>
+            <h2>What is This Game?</h2>
+            <ul>
+                <li>A fast action shooting game.</li>
+                <li>Fight endless levels of enemies.</li>
+                <li>Playable on PC and Mobile.</li>
+            </ul>
         </div>
     </section>
+
 
     <!-- Slide 9 -->
     <section id="slide9" class="slide">
