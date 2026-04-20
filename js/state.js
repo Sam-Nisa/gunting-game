@@ -186,7 +186,7 @@ for (let i = 0; i < 20; i++)
 const WEAPONS = {
   rifle: {
     name: "RIFLE",
-    icon: "🔫",
+    icon: "\u{1F52B}", // 🔫
     ammo: -1,
     damage: 1,
     rate: 8,
@@ -197,7 +197,7 @@ const WEAPONS = {
   },
   shotgun: {
     name: "SHOTGUN",
-    icon: "💥",
+    icon: "\u{1F4A5}", // 💥
     ammo: 20,
     damage: 2,
     rate: 25,
@@ -208,7 +208,7 @@ const WEAPONS = {
   },
   rocket: {
     name: "ROCKET",
-    icon: "🚀",
+    icon: "\u{1F680}", // 🚀
     ammo: 6,
     damage: 10,
     rate: 45,

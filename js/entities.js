@@ -15,9 +15,9 @@ let boss = null;
 // ═══════════════════════════════════════════════════
 function announceWave(w) {
   const el = document.getElementById("waveAnnounce");
-  const prefix = w % 5 === 0 ? `⚠️ BOSS LEVEL ${w}!` : `⚡ LEVEL ${w}`;
+  const prefix = w % 5 === 0 ? `\u{26A0}\u{FE0F} BOSS LEVEL ${w}!` : `\u{26A1} LEVEL ${w}`; // ⚠️ and ⚡
   const bgName = getBackgroundNameForWave(w);
-  el.innerHTML = `${prefix}<br><span style="font-size: 0.6em; color: #ffcc00; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">📍 ${bgName}</span>`;
+  el.innerHTML = `${prefix}<br><span style="font-size: 0.6em; color: #ffcc00; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">\u{1F4CD} ${bgName}</span>`; // 📍
   el.style.opacity = "1";
   setTimeout(() => (el.style.opacity = "0"), 3000);
 }

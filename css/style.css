@@ -19,14 +19,14 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols, sans-serif;
             overflow-x: hidden;
             color: #eee;
             user-select: none;
         }
         
         .mono {
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-family: 'JetBrains Mono', 'Courier New', "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", monospace;
             font-weight: 700;
         }
 

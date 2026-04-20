@@ -118,7 +118,7 @@ function renderLeaderboard() {
   ul.innerHTML = window.highScores
     .map(
       (s, i) =>
-        `<li>${["🥇", "🥈", "🥉", "4.", "5.", "6.", "7.", "8."][i] || ""} ` +
+        `<li>${["1. &#x1F3C6;", "2. &#x1F3C6;", "3. &#x1F3C6;", "4.", "5.", "6.", "7.", "8."][i] || ""} ` +
         `<span style="color:#ffcc00">${escHtml(s.score)}</span> pts — ` +
         `${escHtml(s.kills)} kills | Level ${escHtml(s.wave)}</li>`,
     )
@@ -167,7 +167,7 @@ function endGame() {
   const ov = document.getElementById("overlay");
   // MODIFIED: Added settings controls back to the Game Over screen
   ov.innerHTML = `
-    <h1>💀 GAME OVER</h1>
+    <h1>&#x1F480; GAME OVER</h1>
     <p style="color:#ffcc00;font-size:22px;margin:8px">SCORE: ${score}</p>
     <p style="color:#aaa">Kills: ${kills} &nbsp;|&nbsp; Level: ${wave}</p>
     <div id="leaderboard" style="margin-top:14px;text-align:center">
@@ -231,7 +231,7 @@ function renderShop() {
     <h1>🛒 ARMORY</h1>
     <p class="sub">Upgrade your arsenal for the next run.</p>
     <div style="width:100%;text-align:center;margin-bottom:12px;">
-      <span style="background:rgba(255,187,0,0.1);color:#ffcc00;padding:6px 12px;border-radius:12px;border:1px solid rgba(255,187,0,0.3);font-weight:700;">🪙 ${window.coins} COINS</span>
+      <span style="background:rgba(255,187,0,0.1);color:#ffcc00;padding:6px 12px;border-radius:12px;border:1px solid rgba(255,187,0,0.3);font-weight:700;">&#x1F4B0; ${window.coins} COINS</span>
     </div>
     <div style="width:100%;display:grid;gap:12px;text-align:left;max-height:200px;overflow-y:auto;padding-right:8px;">
       ${SHOP_ITEMS.map((item, idx) => {

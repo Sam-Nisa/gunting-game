@@ -510,6 +510,9 @@ function drawParticles() {
   ctx.globalAlpha = 1;
 }
 
+const globalShieldImg = new Image();
+globalShieldImg.src = "./img/shield.svg";
+
 function drawPickups() {
   ctx.save();
   ctx.translate(-camX, 0);
@@ -541,14 +544,21 @@ function drawPickups() {
     ctx.font = "bold 15px Courier New";
     ctx.textAlign = "center";
     const icons = {
-      health: "♥",
-      shotgun: "💥",
-      rocket: "🚀",
-      grenade: "💣",
-      score: "★",
-      shield: "🛡",
+      health: "\u2665", // ♥
+      shotgun: "\u{1F4A5}", // 💥
+      rocket: "\u{1F680}", // 🚀
+      grenade: "\u{1F4A3}", // 💣
+      score: "\u2605", // ★
     };
-    ctx.fillText(icons[pu.type] || "★", 0, 6);
+
+    if (isShield && globalShieldImg.complete) {
+      ctx.drawImage(globalShieldImg, -10, -10, 20, 20);
+    } else if (icons[pu.type]) {
+      ctx.fillText(icons[pu.type], 0, 6);
+    } else {
+      ctx.fillText("\u2605", 0, 6);
+    }
+    
     ctx.restore();
   }
   ctx.restore();

@@ -25,37 +25,37 @@
 <body>
     <div id="gameWrap">
         <div id="ui">
-            <div class="hpWrap">❤️ <div id="healthBar" style="position:relative;">
+            <div class="hpWrap">&#x2764;&#xFE0F; <div id="healthBar" style="position:relative;">
                     <div id="healthFill" style="width:100%"></div>
                     <span id="healthPerc"
                         style="position:absolute; width:100%; text-align:center; left:0; top:-1px; font-size:12px; font-weight:700; color:#fff; text-shadow:0 1px 2px #000; pointer-events:none;">100%</span>
                 </div>
             </div>
             <div>
-                <span id="weaponIcon">🔫</span>
+                <span id="weaponIcon">&#x1F52B;</span>
                 <span id="weaponName" class="mono">RIFLE</span>
                 | AMO:<span id="ammoDisplay" class="mono">∞</span>
             </div>
-            <div id="grenadeDisplay">💣 <span id="grenadeDisplay2" class="mono">3</span></div>
-            <div id="shieldDisplay" style="display:flex;align-items:center;gap:4px;">🛡️ <span id="shieldActiveLabel"
+            <div id="grenadeDisplay">&#x1F4A3; <span id="grenadeDisplay2" class="mono">3</span></div>
+            <div id="shieldDisplay" style="display:flex;align-items:center;gap:4px;"><img src="./img/shield.svg" style="width:16px; height:16px;" alt="Shield"> <span id="shieldActiveLabel"
                     style="display:none;color:#00eeff;font-size:13px;font-weight:700;text-shadow:0 0 8px #00eeff;letter-spacing:1px;animation:shieldPulse 0.5s ease-in-out infinite alternate;"></span>
             </div>
-            <div>💀 <span id="killsDisplay">0</span></div>
-            <div>🧡 <span id="livesDisplay">3</span></div>
-            <div>⭐ <span id="scoreDisplay">0</span></div>
-            <div>🪙 <span id="coinDisplay">0</span></div>
-            <div>🎨 <span id="skinDisplay">DEFAULT</span></div>
+            <div>&#x1F480; <span id="killsDisplay">0</span></div>
+            <div>&#x2764;&#xFE0F; <span id="livesDisplay">3</span></div>
+            <div>&#x2B50; <span id="scoreDisplay">0</span></div>
+            <div>&#x1F4B0; <span id="coinDisplay">0</span></div>
+            <div>&#x1F3A8; <span id="skinDisplay">DEFAULT</span></div>
             <!-- MODIFIED: Wrapped right side controls for better layout -->
             <div class="rightControls">
                 <div class="waveBadge" style="display:flex;flex-direction:column;align-items:flex-end;">
-                    <div>Level🌊 <span id="waveDisplay" class="mono">1</span></div>
+                    <div>Level&#x1F30A; <span id="waveDisplay" class="mono">1</span></div>
                     <div id="bgNameDisplay" style="font-size:10px;color:#aaa;line-height:1;"></div>
                 </div>
-                <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop">🛒
+                <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop">&#x1F6D2;
                     <span>SHOP</span>
                 </div>
-                <div id="pauseBtn" class="topActionBtn" onclick="togglePause()" title="Pause (Esc / P)">⏸</div>
-                <div id="inGameSoundToggle" class="topActionBtn soundToggle" onclick="toggleSound()">🔊</div>
+                <div id="pauseBtn" class="topActionBtn" onclick="togglePause()" title="Pause (Esc / P)">&#x23F8;&#xFE0F;</div>
+                <div id="inGameSoundToggle" class="topActionBtn soundToggle" onclick="toggleSound()">&#x1F50A;</div>
             </div>
         </div>
         <canvas id="gameCanvas" width="900" height="480"></canvas>
@@ -65,7 +65,7 @@
             <span class="controlChip"><strong>SPACE</strong> Shoot</span>
             <span class="controlChip"><strong>SHIFT</strong> Dash</span>
             <span class="controlChip"><strong>3/G</strong> Grenade</span>
-            <span class="controlChip"><strong>🛡️</strong> Walk over to shield</span>
+            <span class="controlChip"><img src="./img/shield.svg" style="width:14px; height:14px; vertical-align:middle;"> Walk over to shield</span>
             <span class="controlChip"><strong>1,2,Q</strong> Weapon</span>
             <span class="controlChip"><strong>M</strong> Sound</span>
         </div>
@@ -79,42 +79,42 @@
             </div>
             <div class="mc-actions">
                 <div class="mc-row">
-                    <button id="btnWeap" class="mc-btn mc-btn-small" data-key="q">🔫</button>
+                    <button id="btnWeap" class="mc-btn mc-btn-small" data-key="q">&#x1F52B;</button>
                     <button id="btnDash" class="mc-btn mc-btn-small" data-key="Shift">Dash</button>
-                    <button id="btnGrenade" class="mc-btn mc-btn-small" data-key="g">💣</button>
+                    <button id="btnGrenade" class="mc-btn mc-btn-small" data-key="g">&#x1F4A3;</button>
                 </div>
                 <div class="mc-row">
-                    <button id="btnShoot" class="mc-btn mc-btn-large" data-key=" ">🔥</button>
+                    <button id="btnShoot" class="mc-btn mc-btn-large" data-key=" ">&#x1F525;</button>
                 </div>
             </div>
         </div>
         <div id="overlay">
-            <h1 class="glitch" data-text="⚡ METAL FURY">⚡ METAL FURY</h1>
+            <h1 class="glitch" data-text="METAL FURY">&#x26A1; METAL FURY</h1>
             <p class="sub">Ultimate Edition — Survive the jungle assault</p>
             <div id="leaderboard">
-                <h3>🏆 HIGH SCORES</h3>
+                <h3>&#x1F3C6; HIGH SCORES</h3>
                 <ul id="lbList">
                     <li>— No scores yet —</li>
                 </ul>
             </div>
             <div class="settingsWrap" style="flex-direction:row;justify-content:center;margin-bottom:20px;gap:10px;">
                 <span id="shopToggleBtnOverlay" class="topActionBtn pulse-anim" style="animation:none;"
-                    onclick="toggleShop()" title="Open Shop">🛒 SHOP</span>
-                <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">🔊 SOUND</span>
+                    onclick="toggleShop()" title="Open Shop">&#x1F6D2; SHOP</span>
+                <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">&#x1F50A; SOUND</span>
             </div>
             <button class="btn primary-btn pulse-anim" onclick="startGame()">
-                <span class="btn-content">▶ START GAME</span>
+                <span class="btn-content">&#x25B6; START GAME</span>
             </button>
         </div>
         <div id="shopModal"></div>
         <div id="waveAnnounce"></div>
         <div id="pauseOverlay">
             <div class="pause-panel">
-                <div class="pause-icon">⏸</div>
+                <div class="pause-icon">&#x23F8;&#xFE0F;</div>
                 <h2 class="pause-title">PAUSED</h2>
                 <p class="pause-sub">Game frozen — your progress is safe.</p>
                 <button class="btn primary-btn" onclick="resumeGame()">
-                    <span class="btn-content">▶ RESUME</span>
+                    <span class="btn-content">&#x25B6; RESUME</span>
                 </button>
                 <div class="pause-controls">
                     <div class="pause-ctrl-row"><kbd>ESC</kbd> or <kbd>P</kbd> — Pause / Resume</div>
@@ -127,7 +127,7 @@
             </div>
         </div>
         <a href="presentation.html" class="topActionBtn" style="text-decoration:none; color:inherit;"
-            title="View Presentation">📊 PRESENTATION</a>
+            title="View Presentation">&#x1F4CA; PRESENTATION</a>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
