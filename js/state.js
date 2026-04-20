@@ -80,16 +80,16 @@ function setBackgroundForWave(w) {
     let tempImg = prevBgImage;
     prevBgImage = bgImage;
     bgImage = tempImg;
-    
+
     prevBgImageLoaded = bgImageLoaded;
     bgImageLoaded = false;
-    
+
     setupImage(bgImage, true);
     setupImage(prevBgImage, false);
-    
+
     bgTransitionAlpha = 0.0;
   }
-  
+
   bgImageLoaded = false;
   bgImage.src = nextSrc;
 }

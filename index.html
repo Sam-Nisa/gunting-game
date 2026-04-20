@@ -51,10 +51,10 @@
                     <div>Level&#x1F30A; <span id="waveDisplay" class="mono">1</span></div>
                     <div id="bgNameDisplay" style="font-size:10px;color:#aaa;line-height:1;"></div>
                 </div>
-                <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop">&#x1F6D2;
+                <div id="shopToggleBtn" class="topActionBtn" onclick="toggleShop()" title="Open Shop"><img src="./img/shop.png" alt="Shop" style="width: 16px; height: 16px; margin-right: 4px; vertical-align: middle; filter: invert(1);">
                     <span>SHOP</span>
                 </div>
-                <div id="pauseBtn" class="topActionBtn" onclick="togglePause()" title="Pause (Esc / P)">&#x23F8;&#xFE0F;</div>
+                <div id="pauseBtn" class="topActionBtn" onclick="togglePause()" title="Pause (Esc / P)"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></div>
                 <div id="inGameSoundToggle" class="topActionBtn soundToggle" onclick="toggleSound()">&#x1F50A;</div>
             </div>
         </div>
@@ -99,22 +99,22 @@
             </div>
             <div class="settingsWrap" style="flex-direction:row;justify-content:center;margin-bottom:20px;gap:10px;">
                 <span id="shopToggleBtnOverlay" class="topActionBtn pulse-anim" style="animation:none;"
-                    onclick="toggleShop()" title="Open Shop">&#x1F6D2; SHOP</span>
+                    onclick="toggleShop()" title="Open Shop"><img src="./img/shop.png" alt="Shop" style="width: 16px; height: 16px; margin-right: 4px; vertical-align: middle; filter: invert(1);"> SHOP</span>
                 <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">&#x1F50A; SOUND</span>
             </div>
             <button class="btn primary-btn pulse-anim" onclick="startGame()">
-                <span class="btn-content">&#x25B6; START GAME</span>
+                <span class="btn-content"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-right: 4px;"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>START GAME</span>
             </button>
         </div>
         <div id="shopModal"></div>
         <div id="waveAnnounce"></div>
         <div id="pauseOverlay">
             <div class="pause-panel">
-                <div class="pause-icon">&#x23F8;&#xFE0F;</div>
+                <div class="pause-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></div>
                 <h2 class="pause-title">PAUSED</h2>
                 <p class="pause-sub">Game frozen — your progress is safe.</p>
                 <button class="btn primary-btn" onclick="resumeGame()">
-                    <span class="btn-content">&#x25B6; RESUME</span>
+                    <span class="btn-content"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-right: 4px;"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>RESUME</span>
                 </button>
                 <div class="pause-controls">
                     <div class="pause-ctrl-row"><kbd>ESC</kbd> or <kbd>P</kbd> — Pause / Resume</div>

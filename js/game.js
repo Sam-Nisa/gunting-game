@@ -178,7 +178,7 @@ function endGame() {
       <span id="shopToggleBtnOverlay" class="topActionBtn pulse-anim" style="animation:none;" onclick="toggleShop()" title="Open Shop">🛒 SHOP</span>
       <span id="soundToggleBtn" class="topActionBtn" onclick="toggleSound()">🔊 SOUND</span>
     </div>
-    <button class="btn" onclick="startGame()">▶ PLAY AGAIN</button>
+    <button class="btn" onclick="startGame()"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-right: 4px;"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>PLAY AGAIN</button>
   `;
   toggleSound(soundOn); // Re-apply correct sound icon
   renderLeaderboard();
@@ -195,7 +195,7 @@ function pauseGame() {
   const pauseEl = document.getElementById("pauseOverlay");
   if (pauseEl) pauseEl.style.display = "flex";
   const btn = document.getElementById("pauseBtn");
-  if (btn) { btn.textContent = "▶"; btn.classList.add("is-paused"); }
+  if (btn) { btn.innerHTML = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top;"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`; btn.classList.add("is-paused"); }
 }
 
 function resumeGame() {
@@ -205,7 +205,7 @@ function resumeGame() {
   const pauseEl = document.getElementById("pauseOverlay");
   if (pauseEl) pauseEl.style.display = "none";
   const btn = document.getElementById("pauseBtn");
-  if (btn) { btn.textContent = "⏸"; btn.classList.remove("is-paused"); }
+  if (btn) { btn.innerHTML = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`; btn.classList.remove("is-paused"); }
 }
 
 function togglePause() {

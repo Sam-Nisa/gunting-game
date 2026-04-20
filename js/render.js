@@ -558,7 +558,7 @@ function drawPickups() {
     } else {
       ctx.fillText("\u2605", 0, 6);
     }
-    
+
     ctx.restore();
   }
   ctx.restore();
