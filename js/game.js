@@ -62,9 +62,11 @@ function loop(timestamp) {
   lastTime = timestamp;
 
   if (deltaTime > 250) deltaTime = 250;
+  if (deltaTime < 0) deltaTime = 16.66; // Fallback for negative desync
 
-  timeScale = deltaTime / (1000 / 144);
-  gameSpeed = window.baseGameSpeed * timeScale;
+  timeScale = Math.max(0.1, deltaTime / (1000 / 144));
+  gameSpeed = (window.baseGameSpeed || 0.4) * timeScale;
+  if (isNaN(gameSpeed)) gameSpeed = 0.4;
 
   if (typeof update === "function") update();
   else console.warn("update() is not available yet");
@@ -130,6 +132,8 @@ function renderLeaderboard() {
 //  START / END
 // ═══════════════════════════════════════════════════
 function startGame() {
+  window.focus();
+  if (canvas) canvas.focus();
   if (AC.state === "suspended") AC.resume();
   document.getElementById("overlay").style.display = "none";
   score = 0;

@@ -50,16 +50,16 @@ setupImage(bgImage, true);
 setupImage(prevBgImage, false);
 
 const BG_NAMES = [
-  "Angkor Wat temple",
-  "Bayon temple",
-  "Baphuon Temple",
-  "Beng Mealea",
-  "Neak Poan Temple",
-  "Song Saa Island",
-  "Koh Rong Samloem",
-  "Koh Rong",
-  "Kampong Chhnang sunset",
-  "Kampot sunset"
+  "Angkor Gate at Dawn",
+  "Bayon Moonrise",
+  "Ta Prohm — Living Ruins",
+  "Warrior Throne Arena",
+  "Naga Bridge at Midnight",
+  "Apsara Sacred Garden",
+  "Royal Palace — Mekong Night",
+  "Temple of the Storm God",
+  "Preah Vihear — Mountain Temple",
+  "Golden Throne Room Interior"
 ];
 
 function getBackgroundNameForWave(w) {
@@ -73,25 +73,11 @@ function getBackgroundForWave(w) {
 }
 
 function setBackgroundForWave(w) {
-  const nextSrc = getBackgroundForWave(w);
-  if (bgImage.src && bgImage.src.endsWith(nextSrc.replace('./', ''))) return;
-
-  if (bgImageLoaded) {
-    let tempImg = prevBgImage;
-    prevBgImage = bgImage;
-    bgImage = tempImg;
-
-    prevBgImageLoaded = bgImageLoaded;
-    bgImageLoaded = false;
-
-    setupImage(bgImage, true);
-    setupImage(prevBgImage, false);
-
-    bgTransitionAlpha = 0.0;
+  const index = ((w - 1) % BG_IMAGE_COUNT) + 1;
+  const frame = document.getElementById("htmlBgIframe");
+  if (frame) {
+     frame.src = "khmer_backgrounds.html?bg=" + index;
   }
-
-  bgImageLoaded = false;
-  bgImage.src = nextSrc;
 }
 
 setBackgroundForWave(1);

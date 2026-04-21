@@ -364,15 +364,16 @@ function drawBoss(b) {
   );
   hpGrad.addColorStop(0, "#ff0000");
   hpGrad.addColorStop(1, "#ff6600");
+  const displayHp = Math.max(0, Math.floor(b.hp));
   ctx.fillStyle = hpGrad;
-  ctx.fillRect(-bw / 2, -b.h / 2 - 22, (b.hp / b.maxHp) * bw, 14);
+  ctx.fillRect(-bw / 2, -b.h / 2 - 22, (displayHp / b.maxHp) * bw, 14);
   ctx.strokeStyle = "#ff4400";
   ctx.lineWidth = 2;
   ctx.strokeRect(-bw / 2, -b.h / 2 - 22, bw, 14);
   ctx.fillStyle = "#fff";
   ctx.font = "bold 10px Courier New";
   ctx.textAlign = "center";
-  ctx.fillText(`👹 BOSS  ${b.hp}/${b.maxHp}`, -0, -b.h / 2 - 12);
+  ctx.fillText(`👹 BOSS  ${displayHp}/${b.maxHp}`, 0, -b.h / 2 - 12);
   ctx.restore();
 }
 
