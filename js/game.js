@@ -56,14 +56,15 @@ function draw() {
 let lastTime = 0;
 
 function loop(timestamp) {
-  if (!lastTime) lastTime = timestamp || performance.now();
+  if (!timestamp) timestamp = performance.now();
+  if (!lastTime) lastTime = timestamp;
   let deltaTime = timestamp - lastTime;
   lastTime = timestamp;
 
   if (deltaTime > 250) deltaTime = 250;
 
   timeScale = deltaTime / (1000 / 144);
-  gameSpeed = baseGameSpeed * timeScale;
+  gameSpeed = window.baseGameSpeed * timeScale;
 
   if (typeof update === "function") update();
   else console.warn("update() is not available yet");
@@ -161,6 +162,11 @@ function startGame() {
 
 function endGame() {
   gameRunning = false;
+  player.hp = 0;
+  document.getElementById("healthFill").style.width = "0%";
+  const hpPercEl = document.getElementById("healthPerc");
+  if (hpPercEl) hpPercEl.textContent = "0%";
+
   stopMusic();
   playSound("die");
   saveScore(score, kills, wave);

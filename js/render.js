@@ -1070,8 +1070,7 @@ function update() {
         b.y < player.y + player.h
       ) {
         b.life = 0;
-        const damage =
-          (b.boss ? 18 : 10) * DIFFICULTY_SETTINGS[difficulty].damageMult;
+        const damage = player.maxHp * 0.03;
         player.hp -= damage;
         player.invincible = 45;
         spawnParticles(
